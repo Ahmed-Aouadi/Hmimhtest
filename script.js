@@ -140,7 +140,7 @@ function getAccount(){
     level:localStorage.getItem("accountLevel")||"04",
     avatar:localStorage.getItem("accountAvatar")||"",
     autoPublish:localStorage.getItem("publishMode")||"review",
-    isAdmin:localStorage.getItem("isAdmin")==="1"
+    isAdmin:localStorage.getItem("isAdmin")==="1"||localStorage.getItem("accountRole")==="مسؤول"
   };
 }
 function syncAccount(){
