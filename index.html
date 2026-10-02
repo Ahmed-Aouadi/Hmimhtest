@@ -1,66 +1,180 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="مشاهير العالم - تعرف على أشهر الشخصيات ومعلوماتهم الأساسية">
-<title>مشاهير العالم | Hmimhtest</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#176b4d">
+<meta name="description" content="كشّاف — منصة رقمية عصرية لإدارة التعلم والأنشطة والإنجازات الكشفية.">
+<title>كشّاف | المنصة الكشفية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header">
-  <div class="container nav">
-    <a class="logo" href="#">شخصيات<span>العالم</span></a>
-    <nav><a href="#home">الرئيسية</a><a href="#people">الشخصيات</a><a href="#about">عن الموقع</a></nav>
-    <button class="theme" id="themeBtn" aria-label="تبديل الوضع">☾</button>
+<div class="app-shell">
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="#home" aria-label="كشّاف">
+      <span class="brand-mark"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/SMAlgeria.svg" alt="شعار الكشافة الإسلامية الجزائرية"></span>
+      <span><b>كشّاف</b><small>منصة كشفية رقمية</small></span>
+    </a>
+    <nav class="desktop-nav" aria-label="التنقل الرئيسي">
+      <a class="active" href="#home">الرئيسية</a>
+      <a href="#activities">الأنشطة</a>
+      <a href="#skills">المهارات</a>
+      <a href="#badges">الشارات</a>
+      <a href="#camps">المخيمات</a>
+      <a href="#library">المكتبة</a>
+    </nav>
+    <div class="top-actions">
+      <button class="icon-btn" id="searchBtn" aria-label="بحث">⌕</button>
+      <button class="icon-btn" id="themeBtn" aria-label="الوضع الليلي">☾</button>
+      <button class="profile-chip" id="profileBtn"><span>أ</span><b>أحمد</b></button>
+      <button class="menu-btn" id="menuBtn" aria-label="القائمة">☰</button>
+    </div>
   </div>
 </header>
 
+<aside class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-head"><b>كشّاف</b><button class="icon-btn" id="closeMenu">×</button></div>
+  <a href="#home">الرئيسية</a><a href="#activities">الأنشطة</a><a href="#skills">المهارات</a><a href="#badges">الشارات</a><a href="#camps">المخيمات</a><a href="#library">المكتبة</a><a href="#gallery">المعرض</a><a href="#news">الأخبار</a>
+</aside>
+<div class="overlay" id="overlay"></div>
+
 <main id="home">
 <section class="hero">
-  <div class="container hero-inner">
-    <div>
-      <span class="eyebrow">🌍 اكتشف العالم من خلال أشهر شخصياته</span>
-      <h1>تعرّف على <span>أشهر الشخصيات</span> حول العالم</h1>
-      <p>معلومات مختصرة وواضحة عن شخصيات بارزة في الرياضة، الفن، العلوم والترفيه.</p>
-      <a class="cta" href="#people">استكشف الشخصيات ↓</a>
+  <div class="hero-glow"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="pulse"></span> منصة كشفية حديثة • كن مستعدًا</div>
+      <h1>اكتشف، تعلّم، <em>وخُض المغامرة.</em></h1>
+      <p>مساحتك الرقمية لمتابعة الأنشطة، تطوير المهارات، جمع الشارات، وتوثيق كل إنجاز في رحلتك الكشفية.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#skills">ابدأ رحلتك <span>←</span></a>
+        <button class="btn btn-soft" id="tourBtn">استكشف المنصة <span>✦</span></button>
+      </div>
+      <div class="trust-line"><span class="avatars"><i>م</i><i>س</i><i>ي</i><i>+</i></span><span><b>128+</b> كشافًا في مجتمعنا</span></div>
     </div>
     <div class="hero-card">
-      <div class="orbit">✦</div><div class="hero-icon">🌎</div>
-      <strong>اكتشف • تعلّم • شارك</strong>
-      <small>موسوعة بسيطة للشخصيات</small>
+      <div class="hero-card-bg"></div>
+      <div class="hero-card-top"><span>رحلتك الكشفية</span><span class="status-dot">نشط</span></div>
+      <div class="compass">✦</div>
+      <div class="hero-card-content">
+        <span class="small-label">المستوى الحالي</span>
+        <h3>كشاف متقدم</h3>
+        <div class="level-row"><span>المستوى 4</span><b>82%</b></div>
+        <div class="progress"><span style="width:82%"></span></div>
+        <div class="mini-stats"><span><b>2,450</b><small>نقطة</small></span><span><b>14</b><small>شارة</small></span><span><b>42</b><small>نشاطًا</small></span></div>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="people-section" id="people">
+<section class="stats container">
+  <div><strong data-count="128">128</strong><span>كشاف</span></div>
+  <div><strong data-count="24">24</strong><span>نشاطًا</span></div>
+  <div><strong data-count="18">18</strong><span>شارة متاحة</span></div>
+  <div><strong data-count="7">7</strong><span>مخيمات</span></div>
+</section>
+
+<section class="section" id="activities">
 <div class="container">
-  <div class="section-head">
-    <div><span class="eyebrow">الموسوعة</span><h2>أشهر الشخصيات</h2></div>
-    <span class="count" id="count"></span>
+  <div class="section-head"><div><span class="kicker">على جدولك</span><h2>الأنشطة القادمة</h2><p>تابع ما يحدث في الفوج ولا تفوّت أي تجربة.</p></div><a class="text-link" href="#activities">عرض الكل ←</a></div>
+  <div class="activity-grid">
+    <article class="activity-card featured"><div class="activity-visual mountain"><span>🏕️</span><small>نشاط قادم</small></div><div class="activity-body"><div class="tag green">رحلة</div><h3>رحلة استكشافية إلى الجبل</h3><p>يوم كامل بين الطبيعة والتحديات الكشفية والعمل الجماعي.</p><div class="meta"><span>📅 05 أكتوبر 2026</span><span>⏱ 08:00</span><span>📍 نقطة التجمع</span></div><button class="card-btn join-btn">عرض التفاصيل</button></div></article>
+    <article class="activity-card"><div class="activity-visual volunteer"><span>❤️</span><small>تطوع</small></div><div class="activity-body"><div class="tag red">خدمة</div><h3>حملة نظافة وتشجير</h3><p>نلتقي لخدمة محيطنا وصناعة أثر جميل معًا.</p><div class="meta"><span>📅 10 أكتوبر 2026</span><span>⏱ 09:00</span></div><button class="card-btn join-btn">عرض التفاصيل</button></div></article>
+    <article class="activity-card"><div class="activity-visual training"><span>🧭</span><small>تدريب</small></div><div class="activity-body"><div class="tag gold">مهارات</div><h3>تدريب الملاحة والبوصلة</h3><p>تعلّم قراءة الخريطة واستخدام البوصلة في الميدان.</p><div class="meta"><span>📅 15 أكتوبر 2026</span><span>⏱ 16:00</span></div><button class="card-btn join-btn">عرض التفاصيل</button></div></article>
   </div>
-  <div class="controls">
-    <label class="search">⌕<input id="search" type="search" placeholder="ابحث عن شخصية..."></label>
-    <div class="filters" id="filters">
-      <button class="active" data-filter="all">الكل</button>
-      <button data-filter="رياضة">رياضة</button><button data-filter="فن">فن</button>
-      <button data-filter="علوم">علوم</button><button data-filter="ترفيه">ترفيه</button>
-    </div>
-  </div>
-  <div class="grid" id="grid"></div>
-  <div class="empty" id="empty">لا توجد نتائج مطابقة للبحث.</div>
 </div>
 </section>
 
-<section class="about" id="about">
-<div class="container about-box"><span class="eyebrow">عن المشروع</span><h2>شخصيات العالم في مكان واحد</h2><p>مشروع تعريفي بسيط قابل للتطوير، صُمم ليكون سريعًا ومتجاوبًا وسهل النشر على Vercel.</p></div>
+<section class="section soft-section" id="skills">
+<div class="container">
+  <div class="section-head"><div><span class="kicker">طوّر نفسك</span><h2>المهارات الكشفية</h2><p>تعلم مهارة جديدة، طبّقها، واحصل على نقاطك وشارتك.</p></div><a class="text-link" href="#skills">كل المهارات ←</a></div>
+  <div class="skill-grid">
+    <article class="skill-card"><span class="skill-icon green-icon">🧭</span><div><h3>الملاحة</h3><p>الخريطة، البوصلة، الاتجاهات</p><div class="progress"><span style="width:76%"></span></div><small>76% مكتمل</small></div></article>
+    <article class="skill-card"><span class="skill-icon red-icon">🩹</span><div><h3>الإسعافات الأولية</h3><p>التصرف الصحيح في المواقف الطارئة</p><div class="progress red-progress"><span style="width:62%"></span></div><small>62% مكتمل</small></div></article>
+    <article class="skill-card"><span class="skill-icon gold-icon">🔥</span><div><h3>التخييم والنار</h3><p>الخيمة، النار، السلامة</p><div class="progress gold-progress"><span style="width:88%"></span></div><small>88% مكتمل</small></div></article>
+    <article class="skill-card"><span class="skill-icon blue-icon">🪢</span><div><h3>العقد والحبال</h3><p>العقد الأساسية والاستخدامات</p><div class="progress blue-progress"><span style="width:94%"></span></div><small>94% مكتمل</small></div></article>
+  </div>
+</div>
+</section>
+
+<section class="section" id="badges">
+<div class="container">
+  <div class="section-head"><div><span class="kicker">اجمعها كلها</span><h2>الشارات والإنجازات</h2><p>كل شارة تحكي مهارة اكتسبتها وتجربة عشتها.</p></div><button class="text-link filter-toggle" data-filter="all">كل الشارات ←</button></div>
+  <div class="badges-grid">
+    <article class="badge-card earned"><span class="badge-medal">🧭</span><h3>الملاحة</h3><small>مكتملة</small><i>✓</i></article>
+    <article class="badge-card earned"><span class="badge-medal">🩹</span><h3>الإسعافات</h3><small>مكتملة</small><i>✓</i></article>
+    <article class="badge-card earned"><span class="badge-medal">🔥</span><h3>المخيم</h3><small>مكتملة</small><i>✓</i></article>
+    <article class="badge-card locked"><span class="badge-medal">🌳</span><h3>حامي البيئة</h3><small>6 / 10 مهام</small><i>🔒</i></article>
+    <article class="badge-card locked"><span class="badge-medal">📡</span><h3>الاتصال</h3><small>3 / 8 مهام</small><i>🔒</i></article>
+    <article class="badge-card locked"><span class="badge-medal">🍳</span><h3>الطبخ الكشفي</h3><small>2 / 7 مهام</small><i>🔒</i></article>
+  </div>
+</div>
+</section>
+
+<section class="section camp-section" id="camps">
+<div class="container">
+  <div class="camp-banner">
+    <div><span class="kicker light">تجربة لا تُنسى</span><h2>المخيم الربيعي 2026</h2><p>ثلاثة أيام من المغامرة، التعلم، العمل الجماعي والسمر الكشفي.</p><div class="camp-info"><span>📅 20–22 نوفمبر</span><span>📍 الطبيعة الجزائرية</span><span>👥 64 مشاركًا</span></div><button class="btn btn-white camp-btn">استكشف برنامج المخيم</button></div>
+    <div class="camp-art"><div class="moon">☾</div><div class="tent">⛺</div><div class="trees">♣ ♣ ♣</div></div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="library">
+<div class="container">
+  <div class="section-head"><div><span class="kicker">تعلم في أي وقت</span><h2>المكتبة الكشفية</h2><p>أدلة وملفات ومحتوى يساعدك في رحلتك.</p></div><a class="text-link" href="#library">فتح المكتبة ←</a></div>
+  <div class="library-grid">
+    <article><span>📘</span><div><small>دليل</small><h3>دليل الكشاف الميداني</h3><p>أساسيات الحياة في الخلاء.</p></div><b>PDF</b></article>
+    <article><span>🪢</span><div><small>مهارات</small><h3>مرجع العقد والحبال</h3><p>12 عقدة مع شرح تطبيقي.</p></div><b>PDF</b></article>
+    <article><span>🎵</span><div><small>أناشيد</small><h3>الأناشيد الكشفية</h3><p>مجموعة للاجتماعات والسمر.</p></div><b>ملف</b></article>
+  </div>
+</div>
+</section>
+
+<section class="section soft-section" id="news">
+<div class="container">
+  <div class="section-head"><div><span class="kicker">من الفوج</span><h2>آخر الأخبار</h2></div><a class="text-link" href="#news">كل الأخبار ←</a></div>
+  <div class="news-grid">
+    <article class="news-card"><span class="news-date">01 أكتوبر 2026</span><h3>انطلاق الموسم الكشفي الجديد</h3><p>برنامج جديد مليء بالتدريبات والأنشطة والمبادرات التطوعية.</p><a href="#news">اقرأ الخبر ←</a></article>
+    <article class="news-card"><span class="news-date">28 سبتمبر 2026</span><h3>فتح التسجيل في الأنشطة</h3><p>يمكن للكشافين الآن متابعة جدول الأنشطة والتسجيل فيها.</p><a href="#news">اقرأ الخبر ←</a></article>
+    <article class="news-card"><span class="news-date">24 سبتمبر 2026</span><h3>تحدي المهارات الشهرية</h3><p>أكمل 5 مهارات خلال الشهر وارفع مستواك.</p><a href="#news">اقرأ الخبر ←</a></article>
+  </div>
+</div>
+</section>
+
+<section class="section" id="gallery">
+<div class="container">
+  <div class="section-head"><div><span class="kicker">ذكرياتنا</span><h2>من المعرض</h2></div><a class="text-link" href="#gallery">فتح المعرض ←</a></div>
+  <div class="gallery-grid">
+    <div class="gallery-item g1"><span>🏕️</span><b>في قلب الطبيعة</b></div>
+    <div class="gallery-item g2"><span>🔥</span><b>ليلة السمر</b></div>
+    <div class="gallery-item g3"><span>🧭</span><b>تعلم في الميدان</b></div>
+    <div class="gallery-item g4"><span>🤝</span><b>نخدم مجتمعنا</b></div>
+  </div>
+</div>
 </section>
 </main>
 
-<footer><div class="container">© 2026 شخصيات العالم — Hmimhtest</div></footer>
+<footer class="footer">
+<div class="container footer-grid">
+  <div><div class="brand footer-brand"><span class="brand-mark"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/SMAlgeria.svg" alt=""></span><span><b>كشّاف</b><small>منصة كشفية رقمية</small></span></div><p>منصة تجريبية عصرية لإدارة رحلة الكشاف وتوثيق التعلم والأنشطة والإنجازات.</p></div>
+  <div><h4>المنصة</h4><a href="#activities">الأنشطة</a><a href="#skills">المهارات</a><a href="#badges">الشارات</a><a href="#camps">المخيمات</a></div>
+  <div><h4>روابط</h4><a href="#library">المكتبة</a><a href="#news">الأخبار</a><a href="#gallery">المعرض</a><button id="leaderBtn">لوحة القائد</button></div>
+</div>
+<div class="footer-bottom"><span>© 2026 كشّاف — تصميم تجريبي</span><span>الكشافة الإسلامية الجزائرية • كن مستعدًا</span></div>
+</footer>
+
+<div class="search-modal" id="searchModal"><div class="search-box"><button class="close-modal" data-close="searchModal">×</button><span>⌕</span><input id="searchInput" placeholder="ابحث عن مهارة، شارة، نشاط أو خبر..." autofocus><div id="searchResults"></div></div></div>
+
+<div class="modal" id="detailModal"><div class="modal-card"><button class="close-modal" data-close="detailModal">×</button><div id="detailContent"></div></div></div>
+
+<div class="modal" id="leaderModal"><div class="modal-card wide"><button class="close-modal" data-close="leaderModal">×</button><div class="dashboard-head"><div><span class="kicker">وضع تجريبي</span><h2>لوحة القائد</h2><p>نظرة سريعة على الفوج والأنشطة والإنجازات.</p></div><button class="btn btn-primary" id="addActivityBtn">+ نشاط جديد</button></div><div class="dash-stats"><div><b>128</b><span>كشاف</span></div><div><b>24</b><span>نشاط</span></div><div><b>18</b><span>شارة</span></div><div><b>94%</b><span>الحضور</span></div></div><div class="dashboard-table"><div class="table-title"><h3>آخر الأنشطة</h3><span>هذا الشهر</span></div><div class="table-row head"><span>النشاط</span><span>التاريخ</span><span>المشاركون</span><span>الحالة</span></div><div class="table-row"><span>رحلة استكشافية</span><span>05 أكتوبر</span><span>32</span><em>قادم</em></div><div class="table-row"><span>تدريب العقد</span><span>28 سبتمبر</span><span>27</span><em class="done">مكتمل</em></div><div class="table-row"><span>حملة تطوعية</span><span>22 سبتمبر</span><span>41</span><em class="done">مكتمل</em></div></div></div></div>
+
+<div class="toast" id="toast">تم تحديث رحلتك الكشفية ✓</div>
 <script src="script.js"></script>
 </body>
 </html>
