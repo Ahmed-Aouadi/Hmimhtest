@@ -190,6 +190,7 @@ function postElement(p){
   const art=document.createElement("article");art.className="post user-post"+(p.pinned?" pinned-post":"");art.dataset.postId=p.id;
   const status=p.status!=="published"?'<span class="pending-label">قيد المراجعة</span>':(p.pinned?'<span class="pinned-label">مثبت</span>':"");
   art.innerHTML='<div class="post-head"><span class="post-avatar">'+(p.avatar?'<img src="'+p.avatar+'" alt="">':esc(p.authorName.charAt(0)))+'</span><div><b>'+esc(p.authorName)+(p.role?' • '+esc(p.role):"")+'</b><small>'+formatDate(p.createdAt)+' • '+status+'</small></div><button class="more user-post-menu" data-post-menu="'+p.id+'" data-own="'+own+'" aria-label="خيارات">•••</button></div><p>'+esc(p.text||"").replace(/\n/g,"<br>")+'</p>'+(p.image?'<img class="post-photo" src="'+p.image+'" alt="صورة المنشور">':"")+'<div class="post-actions"><button data-action="like" data-icon="heart">'+(p.likes||0)+'</button><button data-action="comments" data-icon="comment">'+(p.comments||0)+'</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="'+p.id+'">عرض التعليقات والرد</button></div>';
+  if(getSavedPostIds().includes(p.id)){const s=art.querySelector('[data-action="save"]');if(s)s.classList.add("active")}
   return art;
 }
 function createPostView(editId){
@@ -239,7 +240,7 @@ function openCommentsPage(postId){
   box.innerHTML='<div class="thread-detail"><button class="back-comments" id="backComments">← كل النقاشات</button><div class="thread-detail-head"><span class="thread-avatar">'+esc(title.charAt(0))+'</span><div><b>'+esc(title)+'</b><small>نقاش المنشور</small></div></div><div class="thread-messages">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">لا توجد تعليقات بعد. ابدأ النقاش.</div>')+'</div><div class="comment-composer"><input id="pageCommentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="pageSendComment">إرسال</button></div></div>';
   $("#backComments").onclick=renderCommentHub;
   $("#pageSendComment").onclick=()=>{const text=$("#pageCommentInput").value.trim();if(!text)return;const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);openCommentsPage(postId);notify("تم نشر التعليق")};
-  $(".reply-comment").forEach(b=>b.onclick=()=>replyInlinePage(postId,b.dataset.commentId));
+  $(".reply-comment").forEach(b=>b.onclick=()=>commentComposerView(postId,b.dataset.commentId));
   $(".like-comment").forEach(b=>b.onclick=()=>{b.classList.toggle("active");b.textContent=b.classList.contains("active")?"♥ أعجبني":"♡ إعجاب"});
 }
 function replyInlinePage(postId,commentId){
@@ -255,7 +256,7 @@ function commentsView(postId){
   const stored=JSON.parse(localStorage.getItem("comments_"+postId)||"[]"),comments=[...demo,...stored];
   show('<div class="comments-head"><div><h2>التعليقات</h2><p>'+comments.length+' تعليق • مرتبة حسب الأحدث مع تجميع الردود.</p></div></div><div class="comments-list">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">كن أول من يشارك رأيه.</div>')+'</div><div class="comment-composer"><input id="commentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="sendComment">إرسال</button></div>');
   $("#sendComment").onclick=()=>{const text=$("#commentInput").value.trim();if(!text)return;const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);commentsView(postId)};
-  $$(".reply-comment").forEach(b=>b.onclick=()=>replyView(postId,b.dataset.commentId));
+  $(".reply-comment").forEach(b=>b.onclick=()=>commentComposerView(postId,b.dataset.commentId));
   $$(".like-comment").forEach(b=>b.onclick=()=>{b.classList.toggle("active");b.textContent=b.classList.contains("active")?"♥ أعجبني":"♡ إعجاب"});
 }
 function commentHtml(c){return '<div class="comment-item"><span class="mini-avatar">'+esc(c.name.charAt(0))+'</span><div class="comment-body"><div class="comment-bubble"><b>'+esc(c.name)+' <small>'+esc(c.role||"")+'</small></b><p>'+esc(c.text||"")+'</p>'+(c.image?'<img class="comment-photo" src="'+c.image+'" alt="صورة التعليق">':"")+'</div><div class="comment-tools"><time>'+esc(c.time||"")+'</time><button class="reply-comment" data-comment-id="'+esc(c.id)+'">رد</button><button class="like-comment">♡ إعجاب</button></div>'+(c.replies?.length?'<div class="comment-replies">'+c.replies.map(r=>'<div class="reply-item"><span class="mini-avatar purple">'+esc(r.name.charAt(0))+'</span><div><b>'+esc(r.name)+' <small>'+esc(r.role||"")+'</small></b><p>'+esc(r.text||"")+'</p>'+(r.image?'<img class="comment-photo reply-photo" src="'+r.image+'" alt="صورة الرد">':"")+'</div></div>').join("")+'</div>':"")+'</div></div>'}
