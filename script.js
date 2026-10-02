@@ -84,10 +84,12 @@ function mountPremiumIcons(){
   const targets=".feature-icon,.mini-image,.activity-image span,.badge-ring,.badge-list article>span,.role-cards article>span,.stats-inner i,.mobile-nav a,.mobile-nav button,.header .round,.hamb,.logo-mark,.quick-grid button";
   $(targets).forEach(el=>{let html=el.innerHTML;Object.entries(map).forEach(([symbol,name])=>{if(html.includes(symbol)){const shape=shapes[name]||ICONS[name]||ICONS.compass;const svg='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+shape+'</svg>';html=html.replace(symbol,svg);}});el.innerHTML=html;});
 }
+function svgIcon(name){const p={search:'<circle cx="11" cy="11" r="6"></circle><path d="m16 16 5 5"></path>',moon:'<path d="M20 15.5A8 8 0 0 1 8.5 4 8 8 0 1 0 20 15.5Z"></path>',sun:'<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"></path>',menu:'<path d="M4 7h16M4 12h16M4 17h16"></path>',calendar:'<rect x="4" y="5" width="16" height="15" rx="2"></rect><path d="M8 3v4m8-4v4M4 10h16"></path>',badge:'<path d="m12 3 2 3 3 .5-2 2.3.4 3.2-3.4-1.5-3.4 1.5.4-3.2-2-2.3 3-.5 2-3Z"></path><path d="m9 15-1 6 4-2 4 2-1-6"></path>',compass:'<circle cx="12" cy="12" r="9"></circle><path d="m15 9-2 4-4 2 2-4 4-2Z"></path>',check:'<circle cx="12" cy="12" r="9"></circle><path d="m8 12 3 3 5-6"></path>',spark:'<path d="m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z"></path>',activity:'<path d="M4 19V9m5 10V5m6 14v-7m5 7V3"></path>',users:'<circle cx="9" cy="8" r="3"></circle><path d="M3 20a6 6 0 0 1 12 0M16 11a3 3 0 0 1 0 6"></path>',heart:'<path d="M20 8.5C20 14 12 19 12 19S4 14 4 8.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 8 2.5Z"></path>',team:'<circle cx="12" cy="8" r="3"></circle><path d="M5 20a7 7 0 0 1 14 0"></path>'};return '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(p[name]||p.spark)+'</svg>'}
+function mountCleanIcons(){document.querySelectorAll("[data-icon]").forEach(el=>{const n=el.dataset.icon;el.innerHTML=svgIcon(n)});}
 function syncTheme(){
   const dark=localStorage.getItem("scoutTheme")==="dark";
   document.body.classList.toggle("dark",dark);
-  const b=$("#themeBtn");if(b)b.textContent=dark?"☀":"☾";
+  const b=$("#themeBtn");if(b)b.innerHTML=svgIcon(dark?"sun":"moon");
 }
 function activityJoin(){
   if(localStorage.getItem("activityJoined")==="1")return notify("أنت مسجل بالفعل في هذا النشاط ✓");
@@ -220,6 +222,7 @@ $$(".nav a,.mobile-nav a").forEach(a=>a.addEventListener("click",()=>setTimeout(
 window.addEventListener("hashchange",mobileFocus);
 window.addEventListener("resize",mobileFocus);
 mountPremiumIcons();
+mountCleanIcons();
 syncTheme();
 syncGroupInfo();
 if(localStorage.getItem("activityJoined")==="1"){const b=$("#joinActivity");if(b){b.textContent="تم التسجيل ✓";b.classList.remove("primary");b.classList.add("ghost")}}
