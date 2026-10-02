@@ -43,3 +43,21 @@ function featuresView(){const groups=["الحسابات والهوية","الأ�
 $$(".nav a").forEach(a=>a.onclick=()=>{$$(".nav a").forEach(x=>x.classList.remove("active"));a.classList.add("active")});
 $$(".mobile-nav a").forEach(a=>a.onclick=()=>{$$(".mobile-nav a").forEach(x=>x.classList.remove("active"));a.classList.add("active")});
 $("#searchBtn").onclick=()=>show('<h2>بحث شامل 🔎</h2><label class="field"><span>ابحث في المنصة</span><input id="search" autofocus placeholder="نشاط، كشاف، شارة، درس..."></label><p>البحث يمكن أن يشمل المستخدمين والمحتوى والأنشطة والملفات.</p>');
+
+const focusSections=["home","discover","activities","badges","community"];
+function mobileFocus(){
+ if(innerWidth<=650){
+  const id=(location.hash||"#home").slice(1);
+  const target=focusSections.includes(id)?id:"home";
+  document.querySelector("main").classList.add("mobile-focus");
+  focusSections.forEach(x=>{const el=$("#"+x);if(el)el.classList.toggle("mobile-current",x===target)});
+  $$(".mobile-nav a").forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+target));
+  window.scrollTo(0,0);
+ }else{
+  document.querySelector("main").classList.remove("mobile-focus");
+  focusSections.forEach(x=>{const el=$("#"+x);if(el)el.classList.remove("mobile-current")});
+ }
+}
+window.addEventListener("hashchange",mobileFocus);
+window.addEventListener("resize",mobileFocus);
+mobileFocus();
