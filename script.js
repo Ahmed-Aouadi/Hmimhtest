@@ -108,15 +108,8 @@ document.addEventListener("click",e=>{
   if(hash){const id=hash.getAttribute("href").slice(1);if(id){e.preventDefault();go(id);return}}
   const task=e.target.closest(".task-check");if(task){toggleTask(task.closest(".task-row"));return}
   const detail=e.target.closest(".activity-detail");if(detail){activityDetails(detail.dataset.activity);return}
-  const social=e.target.closest(".post-actions button");if(social){
-    social.classList.toggle("active");
-    const label=social.querySelector(".icon-label");
-    if(label && /^\d+$/.test(label.textContent.trim()))label.textContent=String(Number(label.textContent.trim())+(social.classList.contains("active")?1:-1));
-    if(social.classList.contains("active")&&social.dataset.icon==="share")notify("تم تجهيز المنشور للمشاركة");
-    return;
-  }
 });
-$("#accountBtn").onclick=accountView;$("#profileBtn").onclick=accountView;$("#groupCustomizeBtn").onclick=groupView;$("#groupJoinBtn").onclick=()=>notify("تم إرسال طلب الانضمام إلى الفوج");$("#allFeaturesBtn").onclick=featuresView;$("#communityBtn").onclick=()=>go("feed");$("#calendarBtn").onclick=()=>simpleView("تقويم الأنشطة","05 أكتوبر — رحلة الجبل\n10 أكتوبر — حملة التشجير\n15 أكتوبر — تدريب الملاحة");$("#badgesBtn").onclick=()=>go("badges");$("#skillsDetailsBtn").onclick=skillsView;$("#resetTasksBtn").onclick=()=>{localStorage.removeItem("doneTasks");loadTasks();notify("تمت إعادة تعيين مهام اليوم")};
+$("#accountBtn").onclick=accountView;$("#profileBtn").onclick=accountView;$("#groupCustomizeBtn").onclick=groupView;$("#groupJoinBtn").onclick=()=>notify("تم إرسال طلب الانضمام إلى الفوج");$("#allFeaturesBtn").onclick=featuresView;$("#calendarBtn").onclick=()=>simpleView("تقويم الأنشطة","05 أكتوبر — رحلة الجبل\n10 أكتوبر — حملة التشجير\n15 أكتوبر — تدريب الملاحة");$("#badgesBtn").onclick=()=>go("badges");$("#skillsDetailsBtn").onclick=skillsView;$("#resetTasksBtn").onclick=()=>{localStorage.removeItem("doneTasks");loadTasks();notify("تمت إعادة تعيين مهام اليوم")};
 $("#searchBtn").onclick=()=>show('<h2>بحث في كشّاف</h2><label class="field"><span>ابحث</span><input id="searchInput" autofocus placeholder="نشاط، شارة، فوج..."></label><div id="searchResults"></div>');
 $("#groupQuick").onclick=()=>go("group");
 
