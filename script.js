@@ -1,6 +1,8 @@
-const $=s=>document.querySelector(s),$=s=>document.querySelectorAll(s);\nconst ICONS={
+const $=s=>document.querySelector(s),$=s=>document.querySelectorAll(s);
+const ICONS={
 search:'<circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path>',
-moon:'<path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 7 7 0 1 0 20 15.5Z"></path>',\nsun:'<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>',
+moon:'<path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 7 7 0 1 0 20 15.5Z"></path>',
+sun:'<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>',
 compass:'<circle cx="12" cy="12" r="8"></circle><path d="m14.8 9.2-1.7 3.9-3.9 1.7 1.7-3.9 3.9-1.7Z"></path>',
 leaf:'<path d="M20 4C11 4 5 8 5 15c0 3 2 5 5 5 7 0 10-6 10-16Z"></path><path d="M4 20c3-5 7-8 12-10"></path>',
 'arrow-left':'<path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path>',
