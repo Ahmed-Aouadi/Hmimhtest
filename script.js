@@ -1,22 +1,109 @@
-const people=[
-{name:"ليونيل ميسي",birth:"24 يونيو 1987",country:"الأرجنتين",emoji:"⚽",category:"رياضة",role:"لاعب كرة قدم"},
-{name:"كريستيانو رونالدو",birth:"5 فبراير 1985",country:"البرتغال",emoji:"⚽",category:"رياضة",role:"لاعب كرة قدم"},
-{name:"تايلور سويفت",birth:"13 ديسمبر 1989",country:"الولايات المتحدة",emoji:"🎤",category:"فن",role:"مغنية وكاتبة أغاني"},
-{name:"جيمس كاميرون",birth:"16 أغسطس 1954",country:"كندا",emoji:"🎬",category:"فن",role:"مخرج وكاتب"},
-{name:"ألبرت أينشتاين",birth:"14 مارس 1879",country:"ألمانيا",emoji:"🧠",category:"علوم",role:"عالم فيزياء"},
-{name:"ماري كوري",birth:"7 نوفمبر 1867",country:"بولندا",emoji:"🔬",category:"علوم",role:"عالمة فيزياء وكيمياء"},
-{name:"إيلون ماسك",birth:"28 يونيو 1971",country:"جنوب أفريقيا",emoji:"🚀",category:"علوم",role:"رائد أعمال ومهندس"},
-{name:"مستر بيست",birth:"7 مايو 1998",country:"الولايات المتحدة",emoji:"📹",category:"ترفيه",role:"صانع محتوى"},
-{name:"ذا روك",birth:"2 مايو 1972",country:"الولايات المتحدة",emoji:"🎭",category:"ترفيه",role:"ممثل ومصارع سابق"},
-{name:"كيانو ريفز",birth:"2 سبتمبر 1964",country:"كندا",emoji:"🎬",category:"فن",role:"ممثل"},
-{name:"ستيف جوبز",birth:"24 فبراير 1955",country:"الولايات المتحدة",emoji:"💻",category:"علوم",role:"رائد أعمال"},
-{name:"بيونسيه",birth:"4 سبتمبر 1981",country:"الولايات المتحدة",emoji:"🎤",category:"فن",role:"مغنية ومؤدية"}
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+
+const themeBtn=$("#themeBtn");
+const menu=$("#mobileMenu");
+const overlay=$("#overlay");
+const toast=$("#toast");
+
+if(localStorage.getItem("kashaf-theme")==="dark"){
+  document.body.classList.add("dark");
+  themeBtn.textContent="☀";
+}
+themeBtn.addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  const dark=document.body.classList.contains("dark");
+  localStorage.setItem("kashaf-theme",dark?"dark":"light");
+  themeBtn.textContent=dark?"☀":"☾";
+});
+
+const openMenu=()=>{menu.classList.add("open");overlay.classList.add("show")};
+const closeMenu=()=>{menu.classList.remove("open");overlay.classList.remove("show")};
+$("#menuBtn").addEventListener("click",openMenu);
+$("#closeMenu").addEventListener("click",closeMenu);
+overlay.addEventListener("click",closeMenu);
+$$(".mobile-menu a").forEach(a=>a.addEventListener("click",closeMenu));
+
+function showToast(message){
+  toast.textContent=message;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),2300);
+}
+
+const detailModal=$("#detailModal");
+const detailContent=$("#detailContent");
+
+$$(".join-btn").forEach(button=>{
+  button.addEventListener("click",()=>{
+    detailContent.innerHTML="<span class='kicker'>تفاصيل النشاط</span><h2>رحلة استكشافية إلى الجبل 🏕️</h2><p>نشاط ميداني يجمع بين المشي والملاحة والعمل الجماعي والتعرف على البيئة. الموعد 05 أكتوبر 2026 عند الساعة 08:00.</p><div class='camp-info' style='color:var(--muted)'><span>📍 نقطة التجمع الرئيسية</span><span>👥 32 مشاركًا</span><span>🎒 تجهيزات ميدانية</span></div><button class='btn btn-primary' id='modalJoin'>سجل مشاركتي</button>";
+    detailModal.classList.add("show");
+    $("#modalJoin").addEventListener("click",()=>{
+      showToast("تم تسجيل مشاركتك بنجاح ✓");
+      detailModal.classList.remove("show");
+    });
+  });
+});
+
+$(".camp-btn").addEventListener("click",()=>{
+  detailContent.innerHTML="<span class='kicker'>برنامج المخيم</span><h2>المخيم الربيعي 2026 ⛺</h2><p>ثلاثة أيام من الأنشطة الكشفية والتدريب والرياضة والسمر. البرنامج التجريبي قابل للتعديل من لوحة القائد.</p><div class='dashboard-table'><div class='table-row'><span>08:00</span><span>التجمع والإفطار</span><span>اليوم الأول</span></div><div class='table-row'><span>10:00</span><span>تدريب كشفي</span><span>اليوم الأول</span></div><div class='table-row'><span>20:00</span><span>السمر الكشفي</span><span>كل ليلة</span></div></div>";
+  detailModal.classList.add("show");
+});
+
+$$(".close-modal").forEach(button=>{
+  button.addEventListener("click",()=>document.getElementById(button.dataset.close)?.classList.remove("show"));
+});
+$$(".modal,.search-modal").forEach(modal=>{
+  modal.addEventListener("click",event=>{if(event.target===modal)modal.classList.remove("show")});
+});
+
+$("#searchBtn").addEventListener("click",()=>{
+  $("#searchModal").classList.add("show");
+  $("#searchInput").focus();
+});
+
+const searchable=[
+ ["الملاحة","مهارة","🧭"],["الإسعافات الأولية","مهارة","🩹"],["التخييم والنار","مهارة","🔥"],
+ ["العقد والحبال","مهارة","🪢"],["حامي البيئة","شارة","🌳"],["رحلة استكشافية إلى الجبل","نشاط","🏕️"],
+ ["حملة نظافة وتشجير","نشاط","❤️"],["دليل الكشاف الميداني","مكتبة","📘"],["المخيم الربيعي 2026","مخيم","⛺"],
+ ["انطلاق الموسم الكشفي الجديد","خبر","📰"]
 ];
-let active="all";
-const grid=document.getElementById("grid"), search=document.getElementById("search"), count=document.getElementById("count"), empty=document.getElementById("empty");
-function age(birth){const [d,m,y]=birth.match(/\d+/g).map(Number);const now=new Date();let a=now.getFullYear()-y;if(now.getMonth()+1<m||(now.getMonth()+1===m&&now.getDate()<d))a--;return a}
-function render(){const q=search.value.trim().toLowerCase();const list=people.filter(p=>(active==="all"||p.category===active)&&(!q||(p.name+" "+p.country+" "+p.role).toLowerCase().includes(q)));count.textContent=list.length+" شخصية";empty.style.display=list.length?"none":"block";grid.innerHTML=list.map(p=>`<article class="person"><div class="photo"><span class="category">${p.category}</span>${p.emoji}</div><div class="info"><h3>${p.name}</h3><span class="role">${p.role}</span><div class="facts"><div class="fact"><small>تاريخ الميلاد</small><b>${p.birth}</b></div><div class="fact"><small>العمر</small><b>${age(p.birth)} سنة</b></div><div class="fact"><small>الدولة</small><b>${p.country}</b></div><div class="fact"><small>المجال</small><b>${p.category}</b></div></div></div></article>`).join("")}
-document.getElementById("filters").addEventListener("click",e=>{if(e.target.tagName!=="BUTTON")return;document.querySelectorAll(".filters button").forEach(b=>b.classList.remove("active"));e.target.classList.add("active");active=e.target.dataset.filter;render()});
-search.addEventListener("input",render);
-document.getElementById("themeBtn").addEventListener("click",()=>{document.body.classList.toggle("dark");document.getElementById("themeBtn").textContent=document.body.classList.contains("dark")?"☀":"☾"});
-render();
+
+$("#searchInput").addEventListener("input",event=>{
+  const query=event.target.value.trim().toLowerCase();
+  const box=$("#searchResults");
+  if(!query){box.innerHTML="<p style='color:var(--muted);font-size:12px'>ابدأ بكتابة كلمة للبحث...</p>";return}
+  const results=searchable.filter(item=>item[0].toLowerCase().includes(query));
+  box.innerHTML=results.length
+    ?results.map(item=>"<div class='result'><b>"+item[2]+" "+item[0]+"</b><small>"+item[1]+"</small></div>").join("")
+    :"<p style='color:var(--muted);font-size:12px'>لا توجد نتائج مطابقة.</p>";
+});
+
+$("#profileBtn").addEventListener("click",()=>{
+  detailContent.innerHTML="<span class='kicker'>ملف الكشاف</span><h2>أحمد محمد 👋</h2><p>كشاف متقدم — المستوى الرابع</p><div class='dash-stats'><div><b>2,450</b><span>نقطة</span></div><div><b>14</b><span>شارة</span></div><div><b>42</b><span>نشاطًا</span></div><div><b>82%</b><span>التقدم</span></div></div><h3>آخر الإنجازات</h3><p>🏅 شارة الملاحة • 🩹 شارة الإسعافات • 🏕️ شارك في 8 مخيمات</p>";
+  detailModal.classList.add("show");
+});
+
+$("#leaderBtn").addEventListener("click",()=>$("#leaderModal").classList.add("show"));
+$("#addActivityBtn").addEventListener("click",()=>showToast("واجهة إضافة النشاط جاهزة للربط بقاعدة البيانات"));
+$("#tourBtn").addEventListener("click",()=>{
+  $("#skills").scrollIntoView({behavior:"smooth"});
+  showToast("أهلًا بك في رحلتك الكشفية 🧭");
+});
+
+$$(".badge-card").forEach(card=>card.addEventListener("click",()=>{
+  showToast(card.classList.contains("earned")?"هذه الشارة مكتملة ✓":"أكمل المهام المطلوبة لفتح الشارة 🔒");
+}));
+
+$$(".gallery-item").forEach(item=>item.addEventListener("click",()=>showToast("معرض الصور جاهز لإضافة صور الأنشطة")));
+$$(".library-grid article").forEach(item=>item.addEventListener("click",()=>showToast("هذا ملف تجريبي ويمكن ربطه بملف PDF حقيقي")));
+
+const links=$$(".desktop-nav a");
+const sections=["home","activities","skills","badges","camps","library"];
+window.addEventListener("scroll",()=>{
+  let current="home";
+  sections.forEach(id=>{
+    const section=$("#"+id);
+    if(section && scrollY>=section.offsetTop-140)current=id;
+  });
+  links.forEach(link=>link.classList.toggle("active",link.getAttribute("href")==="#"+current));
+});
