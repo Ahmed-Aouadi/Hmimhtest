@@ -107,3 +107,43 @@ window.addEventListener("scroll",()=>{
   });
   links.forEach(link=>link.classList.toggle("active",link.getAttribute("href")==="#"+current));
 });
+/* Mobile app-like section navigation */
+const mobileSectionIds=["home","activities","skills","badges","camps","library"];
+const mobileNav=$$(".bottom-nav a");
+
+function setMobileSection(id){
+  if(!mobileSectionIds.includes(id)) id="home";
+  if(window.innerWidth<=650){
+    document.querySelector("main").classList.add("mobile-sections");
+    document.querySelector("main").classList.toggle("mobile-home",id==="home");
+    $$("#"+id).forEach(el=>el.classList.add("mobile-active"));
+    mobileSectionIds.filter(x=>x!==id).forEach(x=>{
+      const el=$("#"+x);
+      if(el) el.classList.remove("mobile-active");
+    });
+    mobileNav.forEach(a=>a.classList.toggle("active",a.getAttribute("href")==="#"+id));
+    window.scrollTo({top:0,behavior:"smooth"});
+  }else{
+    document.querySelector("main").classList.remove("mobile-sections","mobile-home");
+    mobileSectionIds.forEach(x=>{
+      const el=$("#"+x);
+      if(el) el.classList.remove("mobile-active");
+    });
+  }
+}
+
+function syncMobileSection(){
+  const id=(location.hash||"#home").slice(1);
+  setMobileSection(mobileSectionIds.includes(id)?id:"home");
+}
+mobileNav.forEach(a=>a.addEventListener("click",e=>{
+  if(window.innerWidth<=650){
+    e.preventDefault();
+    const id=a.getAttribute("href").slice(1);
+    history.pushState(null,"","#"+id);
+    setMobileSection(id);
+  }
+}));
+window.addEventListener("hashchange",syncMobileSection);
+window.addEventListener("resize",syncMobileSection);
+syncMobileSection();
