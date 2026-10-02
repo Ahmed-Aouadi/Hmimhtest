@@ -184,6 +184,7 @@ function renderUserPosts(){
   $$(".user-post").forEach(e=>e.remove());
   const posts=readPosts().filter(p=>p.status==="published"||p.authorUsername===getAccount().username);
   posts.reverse().forEach(p=>wrap.prepend(postElement(p)));
+  mountIcons();
 }
 function postElement(p){
   const a=getAccount(), own=p.authorUsername===a.username;
