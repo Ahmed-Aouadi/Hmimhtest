@@ -151,6 +151,33 @@ function rolesView(){
   $("#saveRole").onclick=()=>notify("تم حفظ صلاحيات دور "+activeRole+" ✓");
   $("#newRole").onclick=()=>{const n=prompt("اسم الدور الجديد");if(n){activeRole=n;localStorage.setItem("scoutRole",n);rolesView();notify("تم إنشاء الدور ✓")}};
 }
+function getGroupData(){
+  return {
+    name:localStorage.getItem("groupName")||"فوج الأمل",
+    location:localStorage.getItem("groupLocation")||"ورقلة • الجزائر",
+    leader:localStorage.getItem("groupLeader")||"أحمد محمد",
+    meeting:localStorage.getItem("groupMeeting")||"السبت • 15:00",
+    members:localStorage.getItem("groupMembers")||"48 عضوًا",
+    bio:localStorage.getItem("groupBio")||"فوج شبابي يجمع بين التعلم، الخدمة، المغامرة والعمل الجماعي في بيئة كشفية آمنة ومنظمة.",
+    activities:localStorage.getItem("groupActivities")||"12",
+    badges:localStorage.getItem("groupBadges")||"86"
+  };
+}
+function syncGroupInfo(){
+  const g=getGroupData();
+  const map={groupName:g.name,groupLocation:g.location,groupLeader:g.leader,groupMeeting:g.meeting,groupMembers:g.members,groupBio:g.bio,groupActivities:g.activities,groupBadges:g.badges};
+  Object.entries(map).forEach(([id,val])=>{const el=$("#"+id);if(el)el.textContent=val});
+  const av=$("#groupAvatar");if(av)av.textContent=(g.name||"ك").trim().charAt(0)||"ك";
+}
+function groupView(){
+  const g=getGroupData();
+  show('<span class="eyebrow">إدارة الفوج</span><h2>تخصيص معلومات الفوج</h2><p>عدّل البيانات التي تظهر لأعضاء الفوج والزوار. يمكنك تغييرها في أي وقت حسب الحاجة.</p><div class="group-form"><label class="field"><span>اسم الفوج</span><input id="editGroupName" value="'+g.name+'"></label><label class="field"><span>الموقع</span><input id="editGroupLocation" value="'+g.location+'"></label><label class="field"><span>القائد</span><input id="editGroupLeader" value="'+g.leader+'"></label><label class="field"><span>يوم الاجتماع</span><input id="editGroupMeeting" value="'+g.meeting+'"></label><label class="field"><span>عدد الأعضاء</span><input id="editGroupMembers" value="'+g.members+'"></label><label class="field"><span>الأنشطة هذا الشهر</span><input id="editGroupActivities" value="'+g.activities+'"></label><label class="field"><span>الشارات المكتسبة</span><input id="editGroupBadges" value="'+g.badges+'"></label><label class="field" style="grid-column:1/-1"><span>نبذة عن الفوج</span><textarea id="editGroupBio" rows="4">'+g.bio+'</textarea></label></div><button class="primary" id="saveGroupInfo" style="width:100%;margin-top:16px">حفظ معلومات الفوج</button>');
+  $("#saveGroupInfo").onclick=()=>{
+    const fields={groupName:"editGroupName",groupLocation:"editGroupLocation",groupLeader:"editGroupLeader",groupMeeting:"editGroupMeeting",groupMembers:"editGroupMembers",groupActivities:"editGroupActivities",groupBadges:"editGroupBadges",groupBio:"editGroupBio"};
+    Object.entries(fields).forEach(([key,id])=>localStorage.setItem(key,$("#"+id).value.trim()));
+    syncGroupInfo();closeModal();notify("تم تحديث معلومات الفوج ✓");
+  };
+}
 function featuresView(){
   const groups=["الحسابات والهوية","الأنشطة والفعاليات","التعلم والأكاديمية","الشارات والإنجازات","الحضور والميدان","المجتمع والتواصل","المخيمات والرحلات","المكتبة والمحتوى","الإشعارات","التقارير والتحليلات","الإدارة والصلاحيات","الأمان والخصوصية","التخصيص والعلامة التجارية","المدفوعات","التكاملات وواجهات API"];
   show('<span class="eyebrow">Feature Engine</span><h2>مركز المزايا</h2><p>وحدات المنصة منظمة لتتوسع بدون تشتيت المستخدم.</p><div class="feature-catalog">'+groups.map(g=>'<button class="catalog-item" onclick="notify(\'فتح وحدة '+g+'\')"><b>'+g+'</b><small>بحث متقدم • تقويم • إشعارات • تقارير</small></button>').join("")+'</div>');
@@ -172,6 +199,8 @@ $("#footerRoles").onclick=e=>{e.preventDefault();rolesView()};
 $("#footerSettings").onclick=e=>{e.preventDefault();settingsView()};
 $("#footerHelp").onclick=e=>{e.preventDefault();go("discover")};
 $("#rolesBtn").onclick=rolesView;
+$("#groupCustomizeBtn").onclick=groupView;
+$("#groupJoinBtn").onclick=()=>notify("تم إرسال طلب الانضمام إلى الفوج ✓");
 $("#allFeaturesBtn").onclick=featuresView;
 $("#searchBtn").onclick=searchView;
 $("[data-open]").forEach(b=>{
@@ -192,5 +221,6 @@ window.addEventListener("hashchange",mobileFocus);
 window.addEventListener("resize",mobileFocus);
 mountPremiumIcons();
 syncTheme();
+syncGroupInfo();
 if(localStorage.getItem("activityJoined")==="1"){const b=$("#joinActivity");if(b){b.textContent="تم التسجيل ✓";b.classList.remove("primary");b.classList.add("ghost")}}
 mobileFocus();
