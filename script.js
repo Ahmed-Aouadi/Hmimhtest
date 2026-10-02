@@ -1,4 +1,30 @@
-const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+const $=s=>document.querySelector(s),$=s=>document.querySelectorAll(s);\nconst ICONS={
+search:'<circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path>',
+moon:'<path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 7 7 0 1 0 20 15.5Z"></path>',
+compass:'<circle cx="12" cy="12" r="8"></circle><path d="m14.8 9.2-1.7 3.9-3.9 1.7 1.7-3.9 3.9-1.7Z"></path>',
+leaf:'<path d="M20 4C11 4 5 8 5 15c0 3 2 5 5 5 7 0 10-6 10-16Z"></path><path d="M4 20c3-5 7-8 12-10"></path>',
+'arrow-left':'<path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path>',
+tent:'<path d="m3 20 9-16 9 16"></path><path d="M7 20h10"></path><path d="m12 4 3 16"></path>',
+badge:'<path d="m12 3 2.5 2 3.2-.2.9 3.1 2.4 2.1-1.5 2.8.6 3.1-3 1.2-1.7 2.7-3-1-3 1-1.7-2.7-3-1.2.6-3.1L2.9 10l2.4-2.1.9-3.1 3.2.2L12 3Z"></path><path d="m9 12 2 2 4-4"></path>',
+check:'<path d="m5 12 4 4L19 6"></path>',
+book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z"></path><path d="M4 18h16"></path>',
+users:'<path d="M16 20v-1.5A3.5 3.5 0 0 0 12.5 15h-5A3.5 3.5 0 0 0 4 18.5V20"></path><circle cx="10" cy="8" r="3"></circle><path d="M16 5.2a3 3 0 0 1 0 5.6M20 19v-1.2a3.4 3.4 0 0 0-2.5-3.3"></path>',
+map:'<path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z"></path><path d="M9 3v15M15 6v15"></path>',
+chart:'<path d="M4 19V5"></path><path d="M4 19h16"></path><path d="m7 15 3-4 3 2 5-7"></path>',
+calendar:'<rect x="3" y="4" width="18" height="17" rx="3"></rect><path d="M16 2v4M8 2v4M3 9h18"></path>',
+shield:'<path d="M12 3 20 6v5c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6l8-3Z"></path><path d="m9 12 2 2 4-4"></path>',
+home:'<path d="m3 11 9-8 9 8"></path><path d="M5 10v10h14V10M9 20v-6h6v6"></path>',
+user:'<circle cx="12" cy="8" r="3.5"></circle><path d="M5 21a7 7 0 0 1 14 0"></path>'
+};
+function iconSvg(name){
+  return '<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||ICONS.compass)+'</svg>';
+}
+function mountIcons(){
+  $('[data-icon]').forEach(el=>{
+    const name=el.dataset.icon;
+    el.innerHTML=iconSvg(name);
+  });
+}
 const modal=$("#modal"),box=$("#modalBox"),toast=$("#toast");
 let toastTimer;
 let activeRole=localStorage.getItem("scoutRole")||"ولي";
