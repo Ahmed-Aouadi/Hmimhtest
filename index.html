@@ -62,8 +62,8 @@
  <div class="section-head"><div><span class="muted-label">الميدان</span><h2>أنشطة قادمة</h2></div><button class="text-btn" id="calendarBtn">التقويم</button></div>
  <div class="activity-list">
   <article><div class="date-box"><b>05</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag green">مغامرة</span><h3>رحلة استكشافية إلى الجبل</h3><p>مشي، ملاحة، ألعاب فريق واستكشاف الطبيعة.</p></div><div class="activity-meta"><span data-icon="clock">08:00</span><span data-icon="users">32 مكانًا</span><button class="small-btn" onclick="activityJoin()">انضم</button></div></div></article>
-  <article><div class="date-box"><b>10</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag orange">خدمة</span><h3>حملة نظافة وتشجير</h3><p>مبادرة لخدمة الحي وزراعة الأشجار.</p></div><div class="activity-meta"><span data-icon="clock">09:30</span><span data-icon="users">24 مكانًا</span><button class="small-btn">التفاصيل</button></div></div></article>
-  <article><div class="date-box"><b>15</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag blue">مهارة</span><h3>تدريب الملاحة</h3><p>الخريطة، البوصلة، الاتجاهات والعمل الميداني.</p></div><div class="activity-meta"><span data-icon="clock">16:00</span><span data-icon="users">18 مكانًا</span><button class="small-btn">التفاصيل</button></div></div></article>
+  <article><div class="date-box"><b>10</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag orange">خدمة</span><h3>حملة نظافة وتشجير</h3><p>مبادرة لخدمة الحي وزراعة الأشجار.</p></div><div class="activity-meta"><span data-icon="clock">09:30</span><span data-icon="users">24 مكانًا</span><button class="small-btn activity-detail" data-activity="cleanup">التفاصيل</button></div></div></article>
+  <article><div class="date-box"><b>15</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag blue">مهارة</span><h3>تدريب الملاحة</h3><p>الخريطة، البوصلة، الاتجاهات والعمل الميداني.</p></div><div class="activity-meta"><span data-icon="clock">16:00</span><span data-icon="users">18 مكانًا</span><button class="small-btn activity-detail" data-activity="navigation">التفاصيل</button></div></div></article>
  </div>
 </section>
 
@@ -73,6 +73,26 @@
    <div class="group-hero"><div class="group-avatar" id="groupAvatar">أ</div><div><span>فوج كشّاف</span><h2 id="groupName">فوج الأمل</h2><p id="groupLocation">ورقلة • الجزائر</p></div><span class="group-online"><i></i> نشط</span></div>
    <div class="group-content"><div><h3>عن الفوج</h3><p id="groupBio">فوج شبابي يجمع بين التعلم والخدمة والمغامرة والعمل الجماعي في بيئة كشفية منظمة.</p><div class="group-info-grid"><div><small>القائد</small><b id="groupLeader">أحمد محمد</b></div><div><small>الاجتماع</small><b id="groupMeeting">السبت • 15:00</b></div><div><small>الأعضاء</small><b id="groupMembers">48 عضوًا</b></div></div></div><div class="group-numbers"><div><b id="groupActivities">12</b><small>نشاط هذا الشهر</small></div><div><b id="groupBadges">86</b><small>شارة مكتسبة</small></div><button class="wide-btn" id="groupJoinBtn">طلب الانضمام</button></div></div>
  </article>
+</section>
+
+<section id="skills" class="content-section">
+ <div class="section-head"><div><span class="muted-label">تطورك</span><h2>المهارات</h2></div><button class="text-btn" id="skillsDetailsBtn">خطة التطور</button></div>
+ <div class="skills-grid">
+  <article class="skill-card"><div class="skill-top"><span data-icon="compass"></span><b>الملاحة</b><strong>76%</strong></div><div class="progress"><i style="width:76%"></i></div><small>الخريطة، البوصلة وتحديد الاتجاهات</small></article>
+  <article class="skill-card"><div class="skill-top"><span data-icon="shield"></span><b>الإسعافات الأولية</b><strong>82%</strong></div><div class="progress"><i style="width:82%"></i></div><small>الاستجابة الأولية والسلامة الميدانية</small></article>
+  <article class="skill-card"><div class="skill-top"><span data-icon="camp"></span><b>التخييم</b><strong>64%</strong></div><div class="progress"><i style="width:64%"></i></div><small>إعداد المخيم، النار والتنظيم</small></article>
+  <article class="skill-card"><div class="skill-top"><span data-icon="leaf"></span><b>البيئة</b><strong>91%</strong></div><div class="progress"><i style="width:91%"></i></div><small>حماية الطبيعة والعمل التطوعي</small></article>
+ </div>
+</section>
+
+<section id="tasks" class="content-section gray">
+ <div class="section-head"><div><span class="muted-label">اليوم</span><h2>مهامك اليومية</h2></div><button class="text-btn" id="resetTasksBtn">إعادة التعيين</button></div>
+ <div class="tasks-card">
+  <div class="task-row" data-task="1"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>راجع حقيبة الإسعافات</b><small>مهمة سلامة • 20 نقطة</small></div><strong>20</strong></div>
+  <div class="task-row" data-task="2"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>تدرّب على قراءة الخريطة</b><small>مهارة الملاحة • 30 نقطة</small></div><strong>30</strong></div>
+  <div class="task-row" data-task="3"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>شارك نصيحة في المجتمع</b><small>مشاركة • 15 نقطة</small></div><strong>15</strong></div>
+  <div class="task-row" data-task="4"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>حضّر لرحلة الجبل</b><small>نشاط الغد • 25 نقطة</small></div><strong>25</strong></div>
+ </div>
 </section>
 
 <section id="badges" class="content-section gray">
