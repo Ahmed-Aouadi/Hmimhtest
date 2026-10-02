@@ -138,7 +138,19 @@ $("#footerRoles").onclick=rolesView;
 $("#rolesBtn").onclick=rolesView;
 $("#allFeaturesBtn").onclick=featuresView;
 $("#searchBtn").onclick=searchView;
-$$("[data-open]").forEach(b=>b.onclick=()=>go(b.dataset.open));
+$("[data-open]").forEach(b=>{
+  b.addEventListener("click",e=>{e.preventDefault();go(b.dataset.open)});
+  b.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go(b.dataset.open)}});
+});
+$("a[href^='#']").forEach(a=>{
+  const id=(a.getAttribute("href")||"").slice(1);
+  if(!id)return;
+  a.addEventListener("click",e=>{
+    if(a.id==="footerRoles"||a.id==="accountBtn")return;
+    e.preventDefault();go(id);
+  });
+});
+
 $$(".nav a,.mobile-nav a").forEach(a=>a.addEventListener("click",()=>setTimeout(mobileFocus,0)));
 window.addEventListener("hashchange",mobileFocus);
 window.addEventListener("resize",mobileFocus);
