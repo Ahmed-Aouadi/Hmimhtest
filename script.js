@@ -34,7 +34,9 @@ const modal=$("#modal"),box=$("#modalBox"),toast=$("#toast");
 function show(html){box.innerHTML=html;modal.classList.add("show");mountIcons()}
 function closeModal(){modal.classList.remove("show")}
 function notify(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>toast.classList.remove("show"),2200)}
-function go(id){const el=$("#"+id);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});closeModal()}}
+function openCommunity(){const page=$("#communityPage"),home=$("#home");if(page){home.style.display="none";page.classList.add("show");window.scrollTo({top:0,behavior:"smooth"});renderUserPosts();renderCommentHub()}}
+function closeCommunity(){const page=$("#communityPage"),home=$("#home");if(page){page.classList.remove("show");home.style.display="block";window.scrollTo({top:0,behavior:"smooth"})}}
+function go(id){if(id==="feed"||id==="comments"){openCommunity();setTimeout(()=>{const el=$("#"+id);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})},30);closeModal();return}const el=$("#"+id);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});closeModal()}}
 function activityJoin(){
   localStorage.setItem("activityJoined","1");
   const b=$("#joinActivity");if(b)b.textContent="تم التسجيل ✓";
@@ -150,27 +152,30 @@ function syncAccount(){
   const r=$( "#profileRole");if(r)r.textContent=a.role+" • مستوى "+a.level;
   const w=$( ".welcome-row h1");if(w)w.innerHTML="مرحبًا "+esc(a.name)+" <span>👋</span>";
 }
+function getSavedPostIds(){try{return JSON.parse(localStorage.getItem("savedPosts")||"[]")}catch(e){return[]}}
+function setSavedPostIds(ids){localStorage.setItem("savedPosts",JSON.stringify(ids))}
+function savedPostsView(){
+  const ids=getSavedPostIds();
+  const posts=readPosts().filter(p=>ids.includes(p.id));
+  const demo=[{id:"demo1",authorName:"فوج الأمل",text:"غدًا موعد رحلتنا إلى الجبل."},{id:"demo2",authorName:"سارة",text:"أحسنتُم! تم فتح شارة جديدة لأعضاء الفوج."}].filter(p=>ids.includes(p.id));
+  const list=[...demo,...posts];
+  show('<h2>المنشورات المحفوظة</h2><p>كل المنشورات التي احتفظت بها للرجوع إليها لاحقًا.</p><div class="saved-posts-list">'+(list.length?list.map(p=>'<div class="saved-post-item"><div><b>'+esc(p.authorName)+'</b><small>'+esc((p.text||"منشور بصورة").slice(0,90))+'</small></div><button class="small-btn open-saved" data-saved-id="'+p.id+'">عرض</button><button class="danger-btn remove-saved" data-saved-id="'+p.id+'">إزالة</button></div>').join(""):'<div class="empty-state">لا توجد منشورات محفوظة بعد.</div>')+'</div>');
+  $$(".remove-saved").forEach(b=>b.onclick=()=>{setSavedPostIds(getSavedPostIds().filter(id=>id!==b.dataset.savedId));savedPostsView();notify("تمت إزالة المنشور من المحفوظات")});
+  $$(".open-saved").forEach(b=>b.onclick=()=>{openCommunity();setTimeout(()=>document.querySelector('[data-post-id="'+b.dataset.savedId+'"]')?.scrollIntoView({behavior:"smooth",block:"center"}),30);closeModal()});
+}
 function accountView(){
   const a=getAccount();
-  show('<div class="account-head"><div class="account-avatar-lg" id="accountAvatarPreview">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc((a.name||"أ").charAt(0)))+'</div><div><h2>حسابي</h2><p>@'+esc(a.username)+' • '+esc(a.role)+'</p></div></div>'+
-  '<div class="feature-catalog account-menu">'+
-  '<button class="catalog-item" id="editProfileBtn"><b>الملف الشخصي</b><small>الصورة، الاسم، اسم المستخدم، الصفة</small></button>'+
-  '<button class="catalog-item" id="myPostsBtn"><b>منشوراتي</b><small>تعديل وحذف المنشورات التي أنشأتها</small></button>'+
-  '<button class="catalog-item" id="publishingBtn"><b>إعدادات النشر</b><small>موافقة الإدارة أو النشر التلقائي</small></button>'+
-  (a.isAdmin?'<button class="catalog-item admin-card" id="adminBtn"><b>لوحة إدارة المنشورات</b><small>مراجعة، إخفاء، تثبيت وحذف</small></button>':'')+
-  '<button class="catalog-item" id="accountSettings2"><b>الإعدادات العامة</b><small>الإشعارات والخصوصية</small></button></div>');
-  $("#editProfileBtn").onclick=editProfileView;$("#myPostsBtn").onclick=myPostsView;$("#publishingBtn").onclick=publishingView;
-  if($("#adminBtn"))$("#adminBtn").onclick=adminPostsView;
-  $("#accountSettings2").onclick=settingsView;
+  show('<div class="account-head"><div class="account-avatar-lg" id="accountAvatarPreview">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc((a.name||"أ").charAt(0)))+'</div><div><h2>حسابي</h2><p>@'+esc(a.username)+' • '+esc(a.role)+' • مستوى '+esc(a.level)+'</p></div></div><div class="feature-catalog account-menu"><button class="catalog-item" id="editProfileBtn"><b>الملف الشخصي</b><small>الصورة، الاسم واسم المستخدم</small></button><button class="catalog-item" id="myPostsBtn"><b>منشوراتي</b><small>تعديل وحذف المنشورات التي أنشأتها</small></button><button class="catalog-item" id="savedPostsBtn"><b>المنشورات المحفوظة</b><small>المنشورات التي حفظتها</small></button><button class="catalog-item" id="publishingBtn"><b>إعدادات النشر</b><small>موافقة الإدارة أو النشر التلقائي</small></button>'+(a.isAdmin?'<button class="catalog-item admin-card" id="adminBtn"><b>لوحة إدارة المنشورات</b><small>مراجعة، إخفاء، تثبيت وحذف</small></button>':'')+'<button class="catalog-item" id="accountSettings2"><b>الإعدادات العامة</b><small>الإشعارات والخصوصية</small></button></div>');
+  $("#editProfileBtn").onclick=editProfileView;$("#myPostsBtn").onclick=myPostsView;$("#savedPostsBtn").onclick=savedPostsView;$("#publishingBtn").onclick=publishingView;
+  if($("#adminBtn"))$("#adminBtn").onclick=adminPostsView;$("#accountSettings2").onclick=settingsView;
 }
 function editProfileView(){
   const a=getAccount();
   show('<h2>تعديل الملف الشخصي</h2><p>هذه المعلومات تظهر بجانب منشوراتك.</p><label class="avatar-upload"><input id="avatarFile" type="file" accept="image/*"><span class="account-avatar-lg" id="editAvatarPreview">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc(a.name.charAt(0)))+'</span><b>إضافة أو تغيير الصورة الشخصية</b><small>JPG أو PNG</small></label>'+
-  '<div class="feature-catalog"><label class="field"><span>الاسم</span><input id="accountNameInput" value="'+esc(a.name)+'"></label><label class="field"><span>اسم المستخدم</span><input id="accountUsernameInput" value="'+esc(a.username)+'"></label><label class="field"><span>الصفة</span><select id="accountRoleInput"><option>كشاف</option><option>قائد</option><option>ولي</option><option>مسؤول</option></select></label><label class="field"><span>المستوى</span><input id="accountLevelInput" value="'+esc(a.level)+'"></label></div><button class="wide-btn" id="saveProfile">حفظ الملف الشخصي</button>');
-  $("#accountRoleInput").value=a.role;
+  '<div class="feature-catalog"><label class="field"><span>الاسم</span><input id="accountNameInput" value="'+esc(a.name)+'"></label><label class="field"><span>اسم المستخدم</span><input id="accountUsernameInput" value="'+esc(a.username)+'"></label><label class="field"><span>الصفة</span><input value="'+esc(a.role)+'" disabled></label><label class="field"><span>المستوى</span><input value="'+esc(a.level)+'" disabled></label></div><p class="profile-locked-note">الصفة والمستوى يتم تحديدهما من إدارة الفوج ولا يمكن لصاحب الحساب تعديلهما.</p><button class="wide-btn" id="saveProfile">حفظ الملف الشخصي</button>');
   let avatar=a.avatar;
   $("#avatarFile").onchange=e=>{const file=e.target.files[0];if(!file)return;const rd=new FileReader();rd.onload=()=>{avatar=rd.result;$("#editAvatarPreview").innerHTML='<img src="'+avatar+'" alt="">'};rd.readAsDataURL(file)};
-  $("#saveProfile").onclick=()=>{localStorage.setItem("accountName",$("#accountNameInput").value.trim()||"أحمد");localStorage.setItem("accountUsername",$("#accountUsernameInput").value.trim().replace(/^@/,"")||"ahmed");localStorage.setItem("accountRole",$("#accountRoleInput").value);localStorage.setItem("accountLevel",$("#accountLevelInput").value.trim()||"04");if(avatar)localStorage.setItem("accountAvatar",avatar);syncAccount();closeModal();notify("تم تحديث حسابك")};
+  $("#saveProfile").onclick=()=>{localStorage.setItem("accountName",$("#accountNameInput").value.trim()||"أحمد");localStorage.setItem("accountUsername",$("#accountUsernameInput").value.trim().replace(/^@/,"")||"ahmed");if(avatar)localStorage.setItem("accountAvatar",avatar);syncAccount();closeModal();notify("تم تحديث حسابك")};
 }
 function publishingView(){
   const a=getAccount();
@@ -260,7 +265,7 @@ function commentsView(postId){
   $$(".reply-comment").forEach(b=>b.onclick=()=>replyView(postId,b.dataset.commentId));
   $$(".like-comment").forEach(b=>b.onclick=()=>{b.classList.toggle("active");b.textContent=b.classList.contains("active")?"♥ أعجبني":"♡ إعجاب"});
 }
-function commentHtml(c){return '<div class="comment-item"><span class="mini-avatar">'+esc(c.name.charAt(0))+'</span><div class="comment-body"><div class="comment-bubble"><b>'+esc(c.name)+' <small>'+esc(c.role||"")+'</small></b><p>'+esc(c.text)+'</p></div><div class="comment-tools"><time>'+esc(c.time||"")+'</time><button class="reply-comment" data-comment-id="'+esc(c.id)+'">رد</button><button class="like-comment">♡ إعجاب</button></div>'+(c.replies?.length?'<div class="comment-replies">'+c.replies.map(r=>'<div class="reply-item"><span class="mini-avatar purple">'+esc(r.name.charAt(0))+'</span><div><b>'+esc(r.name)+' <small>'+esc(r.role||"")+'</small></b><p>'+esc(r.text)+'</p></div></div>').join("")+'</div>':"")+'</div></div>'}
+function commentHtml(c){return '<div class="comment-item"><span class="mini-avatar">'+esc(c.name.charAt(0))+'</span><div class="comment-body"><div class="comment-bubble"><b>'+esc(c.name)+' <small>'+esc(c.role||"")+'</small></b><p>'+esc(c.text||"")+'</p>'+(c.image?'<img class="comment-photo" src="'+c.image+'" alt="صورة التعليق">':"")+'</div><div class="comment-tools"><time>'+esc(c.time||"")+'</time><button class="reply-comment" data-comment-id="'+esc(c.id)+'">رد</button><button class="like-comment">♡ إعجاب</button></div>'+(c.replies?.length?'<div class="comment-replies">'+c.replies.map(r=>'<div class="reply-item"><span class="mini-avatar purple">'+esc(r.name.charAt(0))+'</span><div><b>'+esc(r.name)+' <small>'+esc(r.role||"")+'</small></b><p>'+esc(r.text||"")+'</p>'+(r.image?'<img class="comment-photo reply-photo" src="'+r.image+'" alt="صورة الرد">':"")+'</div></div>').join("")+'</div>':"")+'</div></div>'}
 function replyView(postId,commentId){
   show('<h2>الرد على التعليق</h2><p>اكتب ردًا محترمًا وواضحًا.</p><label class="field"><textarea id="replyInput" rows="4" placeholder="اكتب ردك..."></textarea></label><button class="wide-btn" id="sendReply">إرسال الرد</button>');
   $("#sendReply").onclick=()=>{const text=$("#replyInput").value.trim();if(!text)return;const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]"),c=list.find(x=>x.id===commentId);if(!c)return;c.replies=c.replies||[];c.replies.push({name:a.name,role:a.role,text});localStorage.setItem("comments_"+postId,JSON.stringify(list));closeModal();notify("تم نشر الرد");setTimeout(()=>commentsView(postId),100)};
@@ -268,15 +273,21 @@ function replyView(postId,commentId){
 function incrementPostComments(id){
   const p=readPosts(),i=p.findIndex(x=>x.id===id);if(i>=0){p[i].comments=(p[i].comments||0)+1;savePosts(p)}
 }
+function commentComposerView(postId,commentId){
+  show('<h2>'+(commentId?"الرد على التعليق":"إضافة تعليق")+'</h2><p>يمكنك إضافة نص أو صورة أو الاثنين معًا.</p><label class="field"><span>التعليق</span><textarea id="commentComposerText" rows="5" placeholder="اكتب تعليقك هنا..."></textarea></label><label class="post-image-upload"><input id="commentComposerFile" type="file" accept="image/*"><span>إضافة صورة</span><small id="commentComposerName">اختياري</small></label><img id="commentComposerPreview" class="post-photo draft-preview" style="display:none" alt=""><button class="wide-btn" id="commentComposerSend">'+(commentId?"إرسال الرد":"نشر التعليق")+'</button>');
+  let image="";
+  $("#commentComposerFile").onchange=e=>{const file=e.target.files[0];if(!file)return;const rd=new FileReader();rd.onload=()=>{image=rd.result;$("#commentComposerPreview").src=image;$("#commentComposerPreview").style.display="block";$("#commentComposerName").textContent=file.name};rd.readAsDataURL(file)};
+  $("#commentComposerSend").onclick=()=>{const text=$("#commentComposerText").value.trim();if(!text&&!image){notify("اكتب تعليقًا أو أضف صورة");return}const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");if(commentId){const cm=list.find(x=>x.id===commentId);if(!cm)return;cm.replies=cm.replies||[];cm.replies.push({name:a.name,role:a.role,text,image})}else{list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,image,time:"الآن",replies:[]});incrementPostComments(postId)}localStorage.setItem("comments_"+postId,JSON.stringify(list));closeModal();notify(commentId?"تم نشر الرد":"تم نشر التعليق");openCommunity();setTimeout(()=>openCommentsPage(postId),30)};
+}
 document.addEventListener("click",e=>{
   const thread=e.target.closest(".comment-thread");if(thread){openCommentsPage(thread.dataset.thread);document.querySelector("#comments")?.scrollIntoView({behavior:"smooth"});return}
   const refresh=e.target.closest("#refreshComments");if(refresh){renderCommentHub();notify("تم تحديث النقاشات");return}
   const create=e.target.closest("#createPostBtn,#createPostHint");if(create){createPostView();return}
-  const comments=e.target.closest(".comment-link,[data-action='comments']");if(comments){const id=comments.dataset.comments||comments.closest(".post")?.dataset.postId;openCommentsPage(id);document.querySelector("#comments")?.scrollIntoView({behavior:"smooth"});return}
+  const comments=e.target.closest(".comment-link,[data-action='comments']");if(comments){const id=comments.dataset.comments||comments.closest(".post")?.dataset.postId;commentComposerView(id);return}
   const menu=e.target.closest(".user-post-menu");if(menu){const id=menu.dataset.postMenu,own=menu.dataset.own==="true",a=getAccount();if(own)show('<h2>خيارات المنشور</h2><button class="catalog-item" id="editPostNow"><b>تعديل المنشور</b><small>تعديل النص أو الصورة</small></button><button class="catalog-item danger-item" id="deletePostNow"><b>حذف المنشور</b><small>حذف نهائي من حسابك</small></button>');else if(a.isAdmin)show('<h2>إدارة المنشور</h2><button class="catalog-item" id="pinPostNow"><b>تثبيت أو إلغاء التثبيت</b></button><button class="catalog-item" id="hidePostNow"><b>إخفاء المنشور</b></button><button class="catalog-item danger-item" id="deletePostNow"><b>حذف المنشور</b></button>');else return;
     const edit=$("#editPostNow"),del=$("#deletePostNow"),pin=$("#pinPostNow"),hide=$("#hidePostNow");if(edit)edit.onclick=()=>createPostView(id);if(del)del.onclick=()=>{savePosts(readPosts().filter(p=>p.id!==id));closeModal();renderUserPosts();notify("تم حذف المنشور")};if(pin)pin.onclick=()=>{const p=readPosts(),x=p.find(z=>z.id===id);if(x){x.pinned=!x.pinned;x.status="published";savePosts(p);closeModal();renderUserPosts();notify(x.pinned?"تم تثبيت المنشور":"تم إلغاء التثبيت")}};if(hide)hide.onclick=()=>{const p=readPosts(),x=p.find(z=>z.id===id);if(x){x.status="hidden";savePosts(p);closeModal();renderUserPosts();notify("تم إخفاء المنشور")}};return;
   }
-  const save=e.target.closest("[data-action='save']");if(save){save.classList.toggle("active");notify(save.classList.contains("active")?"تم حفظ المنشور":"تمت إزالة المنشور من المحفوظات");return}
+  const social=e.target.closest(".post-actions button");if(social){const postId=social.closest(".post")?.dataset.postId;if(!postId)return;if(social.dataset.action==="save"){const ids=getSavedPostIds(),exists=ids.includes(postId);setSavedPostIds(exists?ids.filter(id=>id!==postId):[...ids,postId]);social.classList.toggle("active",!exists);notify(exists?"تمت إزالة المنشور من المحفوظات":"تم حفظ المنشور");return}if(social.dataset.action==="share"){const text=social.closest(".post")?.querySelector("p")?.textContent||"منشور من كشّاف";if(navigator.share){navigator.share({title:"منشور من كشّاف",text}).then(()=>notify("تمت المشاركة")).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>notify("تم نسخ نص المنشور للمشاركة"))}else notify("يمكنك نسخ نص المنشور ومشاركته");return}if(social.dataset.action==="like"){social.classList.toggle("active");const label=social.querySelector(".icon-label");if(label&&/^\d+$/.test(label.textContent.trim()))label.textContent=String(Number(label.textContent.trim())+(social.classList.contains("active")?1:-1));return}}
 });
-$("#accountBtn").onclick=accountView;$("#profileBtn").onclick=accountView;
+$("#accountBtn").onclick=accountView;$("#profileBtn").onclick=accountView;$("#communityTopBtn").onclick=openCommunity;$("#backHomeFromCommunity").onclick=closeCommunity;$("#openCommentsHub").onclick=()=>{openCommunity();setTimeout(()=>$("#comments")?.scrollIntoView({behavior:"smooth"}),30)};
 syncAccount();renderUserPosts();renderCommentHub();
