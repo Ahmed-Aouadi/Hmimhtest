@@ -85,3 +85,16 @@ button:focus-visible,a:focus-visible{outline:3px solid #f3a05266;outline-offset:
   .stats-inner i{left:12px;top:13px}
   .mobile-nav{box-shadow:0 -8px 24px rgba(7,22,38,.18)}
 }
+
+/* --- final polish for hierarchy and balance --- */
+.hero-dashboard{transform:rotate(.4deg);border-radius:26px;box-shadow:0 28px 70px rgba(5,20,35,.34)}
+.feature-card{border-radius:18px}
+.feature-card.big{border-radius:22px}
+.section-title h2{letter-spacing:-.7px}
+.outline{background:#fffaf2;box-shadow:0 5px 18px rgba(30,45,60,.04)}
+.outline:hover{border-color:#d5c6af;background:#fff;transform:translateY(-1px)}
+.main-activity,.badge-showcase .badge-hero,.community-card{box-shadow:0 20px 50px rgba(22,38,55,.10)}
+.badge-hero{position:relative;overflow:hidden}
+.badge-hero:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-100px;top:-110px;background:#ffffff10}
+.community-card{border:1px solid #ffffff22}
+@media(max-width:650px){.hero-dashboard{transform:none}.outline{width:100%}.section-title .outline{display:block}.feature-card.big{border-radius:20px}}
