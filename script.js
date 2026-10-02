@@ -117,5 +117,16 @@ document.addEventListener("click",e=>{
 $("#accountBtn").onclick=accountView;$("#profileBtn").onclick=accountView;$("#groupCustomizeBtn").onclick=groupView;$("#groupJoinBtn").onclick=()=>notify("تم إرسال طلب الانضمام إلى الفوج");$("#allFeaturesBtn").onclick=featuresView;$("#communityBtn").onclick=()=>go("feed");$("#calendarBtn").onclick=()=>simpleView("تقويم الأنشطة","05 أكتوبر — رحلة الجبل\n10 أكتوبر — حملة التشجير\n15 أكتوبر — تدريب الملاحة");$("#badgesBtn").onclick=()=>go("badges");$("#skillsDetailsBtn").onclick=skillsView;$("#resetTasksBtn").onclick=()=>{localStorage.removeItem("doneTasks");loadTasks();notify("تمت إعادة تعيين مهام اليوم")};
 $("#searchBtn").onclick=()=>show('<h2>بحث في كشّاف</h2><label class="field"><span>ابحث</span><input id="searchInput" autofocus placeholder="نشاط، شارة، فوج..."></label><div id="searchResults"></div>');
 $("#groupQuick").onclick=()=>go("group");
+
+function runSearch(q){
+  const term=q.trim().toLowerCase();
+  const items=[["رحلة استكشافية إلى الجبل","نشاط","activities"],["حملة نظافة وتشجير","نشاط","activities"],["تدريب الملاحة","نشاط","activities"],["سيد الملاحة","شارة","badges"],["الإسعافات الأولية","شارة","badges"],["فوج الأمل","فوج","group"],["الملاحة","مهارة","skills"],["حامي البيئة","شارة","badges"]];
+  const found=items.filter(x=>!term||x[0].toLowerCase().includes(term)||x[1].toLowerCase().includes(term));
+  const box=$("#searchResults");if(!box)return;
+  box.innerHTML=found.length?found.map(x=>'<button class="catalog-item search-result" data-target="'+x[2]+'"><b>'+x[0]+'</b><small>'+x[1]+'</small></button>').join(""):'<p>لا توجد نتائج مطابقة.</p>';
+  box.querySelectorAll(".search-result").forEach(b=>b.onclick=()=>go(b.dataset.target));
+}
+document.addEventListener("input",e=>{if(e.target.id==="searchInput")runSearch(e.target.value)});
+
 mountIcons();syncGroup();loadTasks();
 if(localStorage.getItem("activityJoined")==="1"){const b=$("#joinActivity");if(b)b.textContent="تم التسجيل ✓"}
