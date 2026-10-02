@@ -11,7 +11,7 @@
 <body>
 <div id="app">
 <header class="header">
-  <a class="logo" href="#home"><span class="logo-mark">✦</span><span><b>كشّاف</b><small>عالمك. رحلتك. إنجازك.</small></span></a>
+  <a class="logo" href="#home" data-open="home"><span class="logo-mark">✦</span><span><b>كشّاف</b><small>عالمك. رحلتك. إنجازك.</small></span></a>
   <nav class="nav"><a href="#home" class="active">الرئيسية</a><a href="#discover">اكتشف</a><a href="#activities">الأنشطة</a><a href="#badges">الشارات</a><a href="#community">المجتمع</a></nav>
   <div class="header-actions"><button class="round" id="searchBtn">⌕</button><button class="round" id="themeBtn">☾</button><button class="account" id="accountBtn"><span>أ</span><b>أحمد</b></button><button class="hamb" id="hamb">☰</button></div>
 </header>
@@ -41,12 +41,12 @@
 <section id="discover" class="section page-section">
  <div class="section-title"><div><span>مساحتك الشخصية</span><h2>كل ما تحتاجه، في مكان واحد.</h2><p>واجهة بسيطة تخفي وراءها نظامًا ضخمًا قابلًا للتخصيص.</p></div><button class="outline" id="allFeaturesBtn">عرض كل المزايا</button></div>
  <div class="feature-grid">
-  <article class="feature-card big green"><span class="feature-icon">🧭</span><div><small>التقدم الذكي</small><h3>رحلتي الكشفية</h3><p>خطة شخصية تقترح عليك ما تتعلمه وما تفعله بعد ذلك.</p></div><b>→</b></article>
-  <article class="feature-card"><span class="feature-icon yellow">🏅</span><small>الإنجازات</small><h3>الشارات والمستويات</h3><p>حوّل كل مهارة إلى إنجاز مرئي.</p><b>14 / 18</b></article>
-  <article class="feature-card"><span class="feature-icon blue">📚</span><small>التعلم</small><h3>أكاديمية كشّاف</h3><p>دروس، فيديوهات، اختبارات وتحديات.</p><b>24 درسًا</b></article>
-  <article class="feature-card"><span class="feature-icon coral">🤝</span><small>المجتمع</small><h3>فريقك وأصدقاؤك</h3><p>شارك، تعاون، واحتفل بإنجازات الفريق.</p><b>128 عضوًا</b></article>
-  <article class="feature-card"><span class="feature-icon purple">🗺️</span><small>المغامرات</small><h3>الخرائط والمخيمات</h3><p>اكتشف الأماكن والفعاليات والرحلات.</p><b>7 مخيمات</b></article>
-  <article class="feature-card"><span class="feature-icon mint">📈</span><small>التحليلات</small><h3>تقاريرك الشخصية</h3><p>اعرف تقدمك وحضورك ونقاطك.</p><b>تحليل ذكي</b></article>
+  <article class="feature-card big green" data-open="activities" role="button" tabindex="0"><span class="feature-icon">🧭</span><div><small>التقدم الذكي</small><h3>رحلتي الكشفية</h3><p>خطة شخصية تقترح عليك ما تتعلمه وما تفعله بعد ذلك.</p></div><b>→</b></article>
+  <article class="feature-card" data-open="badges" role="button" tabindex="0"><span class="feature-icon yellow">🏅</span><small>الإنجازات</small><h3>الشارات والمستويات</h3><p>حوّل كل مهارة إلى إنجاز مرئي.</p><b>14 / 18</b></article>
+  <article class="feature-card" data-open="discover" role="button" tabindex="0"><span class="feature-icon blue">📚</span><small>التعلم</small><h3>أكاديمية كشّاف</h3><p>دروس، فيديوهات، اختبارات وتحديات.</p><b>24 درسًا</b></article>
+  <article class="feature-card" data-open="community" role="button" tabindex="0"><span class="feature-icon coral">🤝</span><small>المجتمع</small><h3>فريقك وأصدقاؤك</h3><p>شارك، تعاون، واحتفل بإنجازات الفريق.</p><b>128 عضوًا</b></article>
+  <article class="feature-card" data-open="activities" role="button" tabindex="0"><span class="feature-icon purple">🗺️</span><small>المغامرات</small><h3>الخرائط والمخيمات</h3><p>اكتشف الأماكن والفعاليات والرحلات.</p><b>7 مخيمات</b></article>
+  <article class="feature-card" data-open="discover" role="button" tabindex="0"><span class="feature-icon mint">📈</span><small>التحليلات</small><h3>تقاريرك الشخصية</h3><p>اعرف تقدمك وحضورك ونقاطك.</p><b>تحليل ذكي</b></article>
  </div>
 </section>
 
@@ -54,7 +54,7 @@
  <div class="section-title"><div><span>لا تفوّت التجربة</span><h2>أنشطة هذا الأسبوع</h2><p>اختَر مغامرتك القادمة واحجز مكانك.</p></div><button class="outline" id="calendarBtn">التقويم الكامل</button></div>
  <div class="activity-layout">
   <article class="main-activity"><div class="activity-image mountain"><span>🏔️</span><label>الأحد • 05 أكتوبر</label></div><div class="activity-info"><div class="chips"><i>مغامرة</i><i>متوسط</i></div><h3>رحلة استكشافية إلى الجبل</h3><p>مشي، ملاحة، ألعاب فريق، واستكشاف الطبيعة مع القادة.</p><div class="activity-meta"><span>⏰ 08:00</span><span>📍 نقطة التجمع</span><span>👥 32 مكانًا</span></div><button class="primary full" id="joinActivity">سجّل مشاركتي</button></div></article>
-  <div class="side-activities"><article><span class="mini-image red">🌱</span><div><small>10 أكتوبر</small><h3>حملة نظافة وتشجير</h3><p>خدمة المجتمع</p></div><b>←</b></article><article><span class="mini-image blue">🧭</span><div><small>15 أكتوبر</small><h3>تدريب الملاحة</h3><p>مهارات ميدانية</p></div><b>←</b></article><article><span class="mini-image gold">🔥</span><div><small>18 أكتوبر</small><h3>ليلة السمر</h3><p>فريق • أناشيد • ألعاب</p></div><b>←</b></article></div>
+  <div class="side-activities"><article data-open="activities" role="button" tabindex="0"><span class="mini-image red">🌱</span><div><small>10 أكتوبر</small><h3>حملة نظافة وتشجير</h3><p>خدمة المجتمع</p></div><b>←</b></article><article data-open="activities" role="button" tabindex="0"><span class="mini-image blue">🧭</span><div><small>15 أكتوبر</small><h3>تدريب الملاحة</h3><p>مهارات ميدانية</p></div><b>←</b></article><article data-open="activities" role="button" tabindex="0"><span class="mini-image gold">🔥</span><div><small>18 أكتوبر</small><h3>ليلة السمر</h3><p>فريق • أناشيد • ألعاب</p></div><b>←</b></article></div>
  </div>
 </section>
 
@@ -72,7 +72,7 @@
 
 <nav class="mobile-nav"><a class="active" href="#home">⌂<small>الرئيسية</small></a><a href="#activities">◷<small>الأنشطة</small></a><a href="#badges">🏅<small>الشارات</small></a><a href="#community">♧<small>المجتمع</small></a><button id="mobileAccount">●<small>حسابي</small></button></nav>
 
-<footer><div class="footer-inner"><div><a class="logo"><span class="logo-mark">✦</span><b>كشّاف</b></a><p>منصة رقمية تجعل الرحلة الكشفية أكثر تنظيمًا، متعةً، وتأثيرًا.</p></div><div><b>المنصة</b><a>الأنشطة</a><a>الأكاديمية</a><a>الشارات</a><a>المجتمع</a></div><div><b>الإدارة</b><a id="footerRoles">الأدوار والصلاحيات</a><a>الإعدادات</a><a>المساعدة</a></div></div></footer>
+<footer><div class="footer-inner"><div><a class="logo" href="#home" data-open="home"><span class="logo-mark">✦</span><b>كشّاف</b></a><p>منصة رقمية تجعل الرحلة الكشفية أكثر تنظيمًا، متعةً، وتأثيرًا.</p></div><div><b>المنصة</b><a href="#activities" data-open="activities">الأنشطة</a><a href="#discover" data-open="discover">الأكاديمية</a><a href="#badges" data-open="badges">الشارات</a><a href="#community" data-open="community">المجتمع</a></div><div><b>الإدارة</b><a id="footerRoles" href="#roles">الأدوار والصلاحيات</a><a id="footerSettings" href="#home">الإعدادات</a><a id="footerHelp" href="#discover">المساعدة</a></div></div></footer>
 
 <div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div>
 <div class="toast" id="toast"></div>
