@@ -12,7 +12,7 @@
 <header class="topbar">
   <a class="brand" href="#home"><span class="brand-mark" data-icon="compass"></span><span><b>كشّاف</b><small>منصتك الكشفية</small></span></a>
   <nav class="topnav"><a class="active" href="#home">الرئيسية</a><a href="#feed">المجتمع</a><a href="#activities">الأنشطة</a><a href="#group">الفوج</a><a href="#badges">الإنجازات</a></nav>
-  <div class="top-actions"><button class="icon-btn" id="searchBtn" aria-label="بحث" data-icon="search"></button><button class="avatar" id="accountBtn">أ</button></div>
+  <div class="top-actions"><button class="icon-btn" id="searchBtn" aria-label="بحث" data-icon="search"></button><button class="avatar" id="accountBtn" aria-label="الحساب">أ</button></div>
 </header>
 
 <main id="home">
@@ -48,11 +48,11 @@
 </section>
 
 <section id="feed" class="content-section">
- <div class="section-head"><div><span class="muted-label">آخر المستجدات</span><h2>من مجتمعك</h2></div><button class="text-btn" id="communityBtn">فتح المجتمع</button></div>
- <div class="feed-layout">
+ <div class="section-head"><div><span class="muted-label">آخر المستجدات</span><h2>من مجتمعك</h2></div><div class="section-actions"><button class="text-btn" id="communityBtn">فتح المجتمع</button><button class="post-create-btn" id="createPostBtn">+ منشور جديد</button></div></div>
+ <div class="composer-hint" id="composerHint"><b>شارك شيئًا مع مجتمعك</b><span>المنشور يُراجع حسب إعدادات الفوج قبل ظهوره للجميع.</span><button id="createPostHint">اكتب منشورًا</button></div><div class="feed-layout">
   <div class="posts">
-   <article class="post"><div class="post-head"><span class="post-avatar">ف</span><div><b>فوج الأمل</b><small>منذ 25 دقيقة</small></div><button class="more" data-icon="more"></button></div><p>غدًا موعد رحلتنا إلى الجبل. لا تنسوا الماء، القبعة، والحضور في الموعد.</p><div class="post-image mountain-image"><span data-icon="mountain"></span></div><div class="post-actions"><button data-icon="heart">24</button><button data-icon="comment">8</button><button data-icon="share">مشاركة</button></div></article>
-   <article class="post"><div class="post-head"><span class="post-avatar blue">س</span><div><b>سارة • قائدة</b><small>منذ ساعتين</small></div><button class="more" data-icon="more"></button></div><p>أحسنتُم! تم فتح شارة جديدة لأعضاء الفوج الذين أكملوا تحدي الإسعافات الأولية.</p><div class="achievement"><span data-icon="badge"></span><div><b>شارة الإسعافات الأولية</b><small>+100 نقطة</small></div></div><div class="post-actions"><button data-icon="heart">41</button><button data-icon="comment">12</button><button data-icon="share">مشاركة</button></div></article>
+   <article class="post" data-post-id="demo1"><div class="post-head"><span class="post-avatar">ف</span><div><b>فوج الأمل</b><small>قائد • 02 أكتوبر 2026 • منذ 25 دقيقة</small></div><button class="more" data-icon="more" aria-label="خيارات"></button></div><p>غدًا موعد رحلتنا إلى الجبل. لا تنسوا الماء، القبعة، والحضور في الموعد.</p><div class="post-image mountain-image"><span data-icon="mountain"></span></div><div class="post-actions"><button data-action="like" data-icon="heart">24</button><button data-action="comments" data-icon="comment">8</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="demo1">عرض التعليقات والرد</button></div></article>
+   <article class="post" data-post-id="demo2"><div class="post-head"><span class="post-avatar blue">س</span><div><b>سارة</b><small>قائدة • 02 أكتوبر 2026 • منذ ساعتين</small></div><button class="more" data-icon="more" aria-label="خيارات"></button></div><p>أحسنتُم! تم فتح شارة جديدة لأعضاء الفوج الذين أكملوا تحدي الإسعافات الأولية.</p><div class="achievement"><span data-icon="badge"></span><div><b>شارة الإسعافات الأولية</b><small>+100 نقطة</small></div></div><div class="post-actions"><button data-action="like" data-icon="heart">41</button><button data-action="comments" data-icon="comment">12</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="demo2">عرض التعليقات والرد</button></div></article>
   </div>
   <aside class="side-panel"><div class="panel-title"><b>نشاط الفوج</b><span class="live-dot">مباشر</span></div><div class="member"><span class="mini-avatar">م</span><div><b>محمد</b><small>أكمل شارة المخيم</small></div><time>الآن</time></div><div class="member"><span class="mini-avatar orange">ي</span><div><b>ياسين</b><small>سجّل في رحلة الجبل</small></div><time>10د</time></div><div class="member"><span class="mini-avatar purple">ن</span><div><b>نور</b><small>نشرت تحديثًا</small></div><time>32د</time></div></aside>
  </div>
