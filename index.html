@@ -2,102 +2,87 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#172b46">
-<title>كشّاف — عالمك الكشفي</title>
+<meta name="theme-color" content="#0f172a"><title>كشّاف — منصتك الكشفية</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
-<header class="header">
-  <a class="logo" href="#home"><span class="logo-mark">✦</span><span><b>كشّاف</b><small>عالمك. رحلتك. إنجازك.</small></span></a>
-  <nav class="nav"><a href="#home" class="active">الرئيسية</a><a href="#discover">اكتشف</a><a href="#activities">الأنشطة</a><a href="#badges">الشارات</a><a href="#community">المجتمع</a><a href="#group">الفوج</a></nav>
-  <div class="header-actions"><button class="round" id="searchBtn">⌕</button><button class="round" id="themeBtn">☾</button><button class="account" id="accountBtn"><span>أ</span><b>أحمد</b></button><button class="hamb" id="hamb">☰</button></div>
+<div class="app">
+<header class="topbar">
+  <a class="brand" href="#home"><span class="brand-mark" data-icon="compass"></span><span><b>كشّاف</b><small>منصتك الكشفية</small></span></a>
+  <nav class="topnav"><a class="active" href="#home">الرئيسية</a><a href="#feed">المجتمع</a><a href="#activities">الأنشطة</a><a href="#group">الفوج</a><a href="#badges">الإنجازات</a></nav>
+  <div class="top-actions"><button class="icon-btn" id="searchBtn" aria-label="بحث" data-icon="search"></button><button class="avatar" id="accountBtn">أ</button></div>
 </header>
 
-<main>
-<section id="home" class="hero page-section">
- <div class="hero-orb orb1"></div><div class="hero-orb orb2"></div>
- <div class="hero-grid">
-  <div class="hero-copy">
-   <span class="eyebrow">🌿 منصة كشفية من الجيل الجديد</span>
-   <h1>رحلتك الكشفية<br><em>تبدأ من هنا.</em></h1>
-   <p>تعلّم. استكشف. شارك. اجمع الشارات. وابنِ قصة إنجازاتك في مساحة واحدة صُممت لتكون ممتعة للصغار ومريحة للكبار.</p>
-   <div class="hero-actions"><button class="primary" id="startBtn">ابدأ رحلتك <span>←</span></button><button class="ghost" id="loginBtn">تسجيل الدخول</button></div>
-   <div class="hero-proof"><div class="faces"><i>م</i><i>س</i><i>ي</i><i>ع</i><b>+</b></div><span><strong>2,400+</strong> عضو في المجتمع</span></div>
+<main id="home">
+<section class="dashboard">
+  <div class="welcome-row">
+    <div><span class="muted-label">السبت، 02 أكتوبر</span><h1>مرحبًا أحمد <span>👋</span></h1><p>إليك ما يحدث في عالمك الكشفي اليوم.</p></div>
+    <button class="profile-chip" id="profileBtn"><span class="avatar">أ</span><span><b>أحمد</b><small>كشاف • مستوى 04</small></span><span class="chevron" data-icon="chevron"></span></button>
   </div>
-  <div class="hero-dashboard">
-   <div class="dash-top"><span>لوحة رحلتي</span><b>● متصل</b></div>
-   <div class="welcome"><span class="avatar-big">أ</span><div><small>مساء الخير 👋</small><h3>أحمد، مستعد للمغامرة؟</h3></div></div>
-   <div class="level"><div class="level-head"><span>المستوى 04</span><strong>82%</strong></div><div class="bar"><i style="width:82%"></i></div><small>350 نقطة للوصول إلى المستوى التالي</small></div>
-   <div class="quick-grid"><button data-open="activities">🏕️<b>نشاطاتي</b><small>3 قادمة</small></button><button data-open="badges">🏅<b>شاراتي</b><small>14 مكتملة</small></button><button data-open="skills">🧭<b>مهاراتي</b><small>76% تقدم</small></button><button data-open="tasks">✓<b>مهامي</b><small>5 اليوم</small></button></div>
+  <div class="dashboard-grid">
+    <article class="journey-card">
+      <div class="card-head"><div><span class="muted-label">رحلتك</span><h2>التقدم هذا الأسبوع</h2></div><span class="round-icon" data-icon="trend"></span></div>
+      <div class="progress-row"><strong>72%</strong><span>+180 نقطة هذا الأسبوع</span></div>
+      <div class="progress"><i style="width:72%"></i></div>
+      <div class="journey-stats"><div><b>14</b><span>شارة</span></div><div><b>38</b><span>نشاط</span></div><div><b>76%</b><span>مهارات</span></div></div>
+    </article>
+    <article class="today-card">
+      <div class="card-head"><div><span class="muted-label">القادم</span><h2>رحلة الجبل</h2></div><span class="status">غدًا</span></div>
+      <p>مشي • ملاحة • ألعاب فريق</p><div class="event-line"><span data-icon="clock"></span><b>08:00</b><span data-icon="pin"></span><b>نقطة التجمع</b></div>
+      <button class="wide-btn" id="joinActivity">سجّل مشاركتي</button>
+    </article>
   </div>
+</section>
+
+<section class="quick-area">
+  <div class="section-head"><div><span class="muted-label">الوصول السريع</span><h2>مساحتك</h2></div><button class="text-btn" id="allFeaturesBtn">كل المزايا</button></div>
+  <div class="quick-links">
+    <button data-open="activities"><span data-icon="calendar"></span><b>الأنشطة</b><small>3 قادمة</small></button>
+    <button data-open="badges"><span data-icon="badge"></span><b>الشارات</b><small>14 مكتملة</small></button>
+    <button data-open="skills"><span data-icon="compass"></span><b>المهارات</b><small>76% تقدم</small></button>
+    <button data-open="tasks"><span data-icon="check"></span><b>المهام</b><small>5 اليوم</small></button>
+    <button href="#group" id="groupQuick"><span data-icon="users"></span><b>الفوج</b><small>48 عضوًا</small></button>
+  </div>
+</section>
+
+<section id="feed" class="content-section">
+ <div class="section-head"><div><span class="muted-label">آخر المستجدات</span><h2>من مجتمعك</h2></div><button class="text-btn" id="communityBtn">فتح المجتمع</button></div>
+ <div class="feed-layout">
+  <div class="posts">
+   <article class="post"><div class="post-head"><span class="post-avatar">ف</span><div><b>فوج الأمل</b><small>منذ 25 دقيقة</small></div><button class="more" data-icon="more"></button></div><p>غدًا موعد رحلتنا إلى الجبل. لا تنسوا الماء، القبعة، والحضور في الموعد.</p><div class="post-image mountain-image"><span data-icon="mountain"></span></div><div class="post-actions"><button data-icon="heart">24</button><button data-icon="comment">8</button><button data-icon="share">مشاركة</button></div></article>
+   <article class="post"><div class="post-head"><span class="post-avatar blue">س</span><div><b>سارة • قائدة</b><small>منذ ساعتين</small></div><button class="more" data-icon="more"></button></div><p>أحسنتُم! تم فتح شارة جديدة لأعضاء الفوج الذين أكملوا تحدي الإسعافات الأولية.</p><div class="achievement"><span data-icon="badge"></span><div><b>شارة الإسعافات الأولية</b><small>+100 نقطة</small></div></div><div class="post-actions"><button data-icon="heart">41</button><button data-icon="comment">12</button><button data-icon="share">مشاركة</button></div></article>
+  </div>
+  <aside class="side-panel"><div class="panel-title"><b>نشاط الفوج</b><span class="live-dot">مباشر</span></div><div class="member"><span class="mini-avatar">م</span><div><b>محمد</b><small>أكمل شارة المخيم</small></div><time>الآن</time></div><div class="member"><span class="mini-avatar orange">ي</span><div><b>ياسين</b><small>سجّل في رحلة الجبل</small></div><time>10د</time></div><div class="member"><span class="mini-avatar purple">ن</span><div><b>نور</b><small>نشرت تحديثًا</small></div><time>32د</time></div></aside>
  </div>
 </section>
 
-<section class="ticker"><div><b>✨ اليوم في كشّاف</b><span>تحدي الملاحة الأسبوعي متاح الآن</span><button id="challengeBtn">ابدأ التحدي ←</button></div></section>
-
-<section id="discover" class="section page-section">
- <div class="section-title"><div><span>مساحتك الشخصية</span><h2>كل ما تحتاجه، في مكان واحد.</h2><p>واجهة بسيطة تخفي وراءها نظامًا ضخمًا قابلًا للتخصيص.</p></div><button class="outline" id="allFeaturesBtn">عرض كل المزايا</button></div>
- <div class="feature-grid">
-  <article class="feature-card big green" data-open="activities" role="button" tabindex="0"><span class="feature-icon">🧭</span><div><small>التقدم الذكي</small><h3>رحلتي الكشفية</h3><p>خطة شخصية تقترح عليك ما تتعلمه وما تفعله بعد ذلك.</p></div><b>→</b></article>
-  <article class="feature-card" data-open="badges" role="button" tabindex="0"><span class="feature-icon yellow">🏅</span><small>الإنجازات</small><h3>الشارات والمستويات</h3><p>حوّل كل مهارة إلى إنجاز مرئي.</p><b>14 / 18</b></article>
-  <article class="feature-card" data-open="discover" role="button" tabindex="0"><span class="feature-icon blue">📚</span><small>التعلم</small><h3>أكاديمية كشّاف</h3><p>دروس، فيديوهات، اختبارات وتحديات.</p><b>24 درسًا</b></article>
-  <article class="feature-card" data-open="community" role="button" tabindex="0"><span class="feature-icon coral">🤝</span><small>المجتمع</small><h3>فريقك وأصدقاؤك</h3><p>شارك، تعاون، واحتفل بإنجازات الفريق.</p><b>128 عضوًا</b></article>
-  <article class="feature-card" data-open="activities" role="button" tabindex="0"><span class="feature-icon purple">🗺️</span><small>المغامرات</small><h3>الخرائط والمخيمات</h3><p>اكتشف الأماكن والفعاليات والرحلات.</p><b>7 مخيمات</b></article>
-  <article class="feature-card" data-open="discover" role="button" tabindex="0"><span class="feature-icon mint">📈</span><small>التحليلات</small><h3>تقاريرك الشخصية</h3><p>اعرف تقدمك وحضورك ونقاطك.</p><b>تحليل ذكي</b></article>
+<section id="activities" class="content-section gray">
+ <div class="section-head"><div><span class="muted-label">الميدان</span><h2>أنشطة قادمة</h2></div><button class="text-btn" id="calendarBtn">التقويم</button></div>
+ <div class="activity-list">
+  <article><div class="date-box"><b>05</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag green">مغامرة</span><h3>رحلة استكشافية إلى الجبل</h3><p>مشي، ملاحة، ألعاب فريق واستكشاف الطبيعة.</p></div><div class="activity-meta"><span data-icon="clock">08:00</span><span data-icon="users">32 مكانًا</span><button class="small-btn" onclick="activityJoin()">انضم</button></div></div></article>
+  <article><div class="date-box"><b>10</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag orange">خدمة</span><h3>حملة نظافة وتشجير</h3><p>مبادرة لخدمة الحي وزراعة الأشجار.</p></div><div class="activity-meta"><span data-icon="clock">09:30</span><span data-icon="users">24 مكانًا</span><button class="small-btn">التفاصيل</button></div></div></article>
+  <article><div class="date-box"><b>15</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag blue">مهارة</span><h3>تدريب الملاحة</h3><p>الخريطة، البوصلة، الاتجاهات والعمل الميداني.</p></div><div class="activity-meta"><span data-icon="clock">16:00</span><span data-icon="users">18 مكانًا</span><button class="small-btn">التفاصيل</button></div></div></article>
  </div>
 </section>
 
-<section id="activities" class="section soft page-section">
- <div class="section-title"><div><span>لا تفوّت التجربة</span><h2>أنشطة هذا الأسبوع</h2><p>اختَر مغامرتك القادمة واحجز مكانك.</p></div><button class="outline" id="calendarBtn">التقويم الكامل</button></div>
- <div class="activity-layout">
-  <article class="main-activity"><div class="activity-image mountain"><span>🏔️</span><label>الأحد • 05 أكتوبر</label></div><div class="activity-info"><div class="chips"><i>مغامرة</i><i>متوسط</i></div><h3>رحلة استكشافية إلى الجبل</h3><p>مشي، ملاحة، ألعاب فريق، واستكشاف الطبيعة مع القادة.</p><div class="activity-meta"><span>⏰ 08:00</span><span>📍 نقطة التجمع</span><span>👥 32 مكانًا</span></div><button class="primary full" id="joinActivity">سجّل مشاركتي</button></div></article>
-  <div class="side-activities"><article><span class="mini-image red">🌱</span><div><small>10 أكتوبر</small><h3>حملة نظافة وتشجير</h3><p>خدمة المجتمع</p></div><b>←</b></article><article><span class="mini-image blue">🧭</span><div><small>15 أكتوبر</small><h3>تدريب الملاحة</h3><p>مهارات ميدانية</p></div><b>←</b></article><article><span class="mini-image gold">🔥</span><div><small>18 أكتوبر</small><h3>ليلة السمر</h3><p>فريق • أناشيد • ألعاب</p></div><b>←</b></article></div>
- </div>
+<section id="group" class="content-section">
+ <div class="section-head"><div><span class="muted-label">مساحتك الجماعية</span><h2>الفوج</h2></div><button class="text-btn" id="groupCustomizeBtn">تخصيص</button></div>
+ <article class="group-page">
+   <div class="group-hero"><div class="group-avatar" id="groupAvatar">أ</div><div><span>فوج كشّاف</span><h2 id="groupName">فوج الأمل</h2><p id="groupLocation">ورقلة • الجزائر</p></div><span class="group-online"><i></i> نشط</span></div>
+   <div class="group-content"><div><h3>عن الفوج</h3><p id="groupBio">فوج شبابي يجمع بين التعلم والخدمة والمغامرة والعمل الجماعي في بيئة كشفية منظمة.</p><div class="group-info-grid"><div><small>القائد</small><b id="groupLeader">أحمد محمد</b></div><div><small>الاجتماع</small><b id="groupMeeting">السبت • 15:00</b></div><div><small>الأعضاء</small><b id="groupMembers">48 عضوًا</b></div></div></div><div class="group-numbers"><div><b id="groupActivities">12</b><small>نشاط هذا الشهر</small></div><div><b id="groupBadges">86</b><small>شارة مكتسبة</small></div><button class="wide-btn" id="groupJoinBtn">طلب الانضمام</button></div></div>
+ </article>
 </section>
 
-<section id="badges" class="section page-section">
- <div class="section-title"><div><span>اجعل إنجازك مرئيًا</span><h2>الشارات التي تنتظرك</h2><p>كل شارة قصة، وكل قصة مهارة جديدة.</p></div><button class="outline" id="badgesBtn">معرض الشارات</button></div>
- <div class="badge-showcase"><div class="badge-hero"><div class="badge-ring">🧭</div><span>قريبًا</span><h3>سيد الملاحة</h3><p>أكمل 4 تحديات ميدانية لفتح هذه الشارة.</p><div class="bar"><i style="width:68%"></i></div><small>68% مكتمل</small></div><div class="badge-list"><article class="earned"><span>🩹</span><div><b>الإسعافات الأولية</b><small>مكتملة • 240 نقطة</small></div><strong>✓</strong></article><article class="earned"><span>🔥</span><div><b>خبير المخيم</b><small>مكتملة • 180 نقطة</small></div><strong>✓</strong></article><article><span>🌳</span><div><b>حامي البيئة</b><small>6 من 10 مهام</small></div><strong>68%</strong></article><article><span>🪢</span><div><b>ماهر العقد</b><small>3 من 7 مهام</small></div><strong>43%</strong></article></div></div>
+<section id="badges" class="content-section gray">
+ <div class="section-head"><div><span class="muted-label">إنجازاتك</span><h2>الشارات</h2></div><button class="text-btn" id="badgesBtn">المعرض الكامل</button></div>
+ <div class="badges-grid"><article class="badge-card featured"><span data-icon="badge"></span><div><small>قيد التقدم</small><h3>سيد الملاحة</h3><p>أكمل 4 تحديات ميدانية.</p><div class="progress"><i style="width:68%"></i></div><b>68%</b></div></article><article class="badge-card"><span data-icon="shield"></span><h3>الإسعافات الأولية</h3><small>مكتملة • 240 نقطة</small></article><article class="badge-card"><span data-icon="camp"></span><h3>خبير المخيم</h3><small>مكتملة • 180 نقطة</small></article><article class="badge-card"><span data-icon="leaf"></span><h3>حامي البيئة</h3><small>6 من 10 مهام</small></article></div>
 </section>
-
-<section id="community" class="section community page-section"><div class="community-grid"><div><span class="eyebrow dark">مجتمع كشّاف</span><h2>لا تتعلم وحدك.<br><em>كوّن فريقك.</em></h2><p>فرق، مجموعات، رسائل، تحديات جماعية، ترتيب داخلي، واحتفالات بالإنجازات.</p><button class="primary" id="communityBtn">استكشف المجتمع</button></div><div class="community-card"><div class="ranking-head"><b>🏆 تحدي هذا الأسبوع</b><small>المجموعة</small></div><article><i>1</i><span>🌲</span><div><b>فوج الأبطال</b><small>4,820 نقطة</small></div><strong>+320</strong></article><article><i>2</i><span>⛺</span><div><b>فريق المغامرة</b><small>4,410 نقطة</small></div><strong>+280</strong></article><article class="you"><i>4</i><span>⭐</span><div><b>فريقك</b><small>3,920 نقطة</small></div><strong>+240</strong></article></div></div></section>
-
-<section id="group" class="section group-section page-section">
- <div class="section-title"><div><span>المساحة التنظيمية</span><h2>معلومات الفوج</h2><p>صفحة خاصة بالفوج يمكن تخصيصها حسب الحاجة، من البيانات الأساسية إلى وسائل التواصل والإعلانات.</p></div><button class="outline" id="groupCustomizeBtn">تخصيص معلومات الفوج</button></div>
- <div class="group-profile">
-   <div class="group-cover">
-     <div class="group-avatar" id="groupAvatar">ك</div>
-     <div class="group-cover-copy"><span>فوج كشّاف</span><h3 id="groupName">فوج الأمل</h3><small id="groupLocation">ورقلة • الجزائر</small></div>
-     <div class="group-status"><i></i> نشط الآن</div>
-   </div>
-   <div class="group-body">
-     <div class="group-main">
-       <div class="group-bio"><b>نبذة عن الفوج</b><p id="groupBio">فوج شبابي يجمع بين التعلم، الخدمة، المغامرة والعمل الجماعي في بيئة كشفية آمنة ومنظمة.</p></div>
-       <div class="group-links"><div><span>القائد</span><b id="groupLeader">أحمد محمد</b></div><div><span>يوم الاجتماع</span><b id="groupMeeting">السبت • 15:00</b></div><div><span>عدد الأعضاء</span><b id="groupMembers">48 عضوًا</b></div></div>
-     </div>
-     <aside class="group-side">
-       <div class="group-stat"><strong id="groupActivities">12</strong><span>نشاط هذا الشهر</span></div>
-       <div class="group-stat"><strong id="groupBadges">86</strong><span>شارة مكتسبة</span></div>
-       <button class="primary full" id="groupJoinBtn">انضم إلى الفوج</button>
-     </aside>
-   </div>
- </div>
-</section>
-
-<section class="section stats-strip"><div class="stats-inner"><article><strong>2,400+</strong><span>عضو نشط</span><i>👥</i></article><article><strong>186</strong><span>نشاطًا هذا الشهر</span><i>🏕️</i></article><article><strong>74</strong><span>شارة متاحة</span><i>🏅</i></article><article><strong>96%</strong><span>رضا الأعضاء</span><i>💚</i></article></div></section>
-
-<section class="section roles"><div class="section-title"><div><span>مصمم ليكبر معك</span><h2>منصة واحدة، أدوار بلا حدود.</h2><p>أنت تحدد من يدخل وماذا يرى وماذا يستطيع أن يفعل.</p></div><button class="primary" id="rolesBtn">إدارة الأدوار</button></div><div class="role-cards"><article><span>🧒</span><h3>الكشاف</h3><p>أنشطة، مهارات، شارات، نقاط، ملف شخصي.</p><b>واجهة مخصصة</b></article><article><span>👨‍👩‍👧</span><h3>الولي</h3><p>متابعة الأبناء، الحضور، الإشعارات، الموافقات.</p><b>تحكم عائلي</b></article><article><span>🧑‍✈️</span><h3>القائد</h3><p>إدارة الفوج، الأنشطة، الحضور، التقييمات.</p><b>لوحة قيادة</b></article><article><span>⚙️</span><h3>أدوار مخصصة</h3><p>أنشئ أي نوع حساب وحدد له مئات الصلاحيات.</p><b>صلاحيات دقيقة</b></article></div></section>
 </main>
 
-<nav class="mobile-nav"><a class="active" href="#home">⌂<small>الرئيسية</small></a><a href="#activities">◷<small>الأنشطة</small></a><a href="#badges">🏅<small>الشارات</small></a><a href="#community">♧<small>المجتمع</small></a><button id="mobileAccount">●<small>حسابي</small></button></nav>
-
-<footer><div class="footer-inner"><div><a class="logo"><span class="logo-mark">✦</span><b>كشّاف</b></a><p>منصة رقمية تجعل الرحلة الكشفية أكثر تنظيمًا، متعةً، وتأثيرًا.</p></div><div><b>المنصة</b><a>الأنشطة</a><a href="#discover">الأكاديمية</a><a href="#badges">الشارات</a><a href="#community">المجتمع</a></div><div><b>الإدارة</b><a id="footerRoles" href="#roles">الأدوار والصلاحيات</a><a id="footerSettings" href="#home">الإعدادات</a><a id="footerHelp" href="#discover">المساعدة</a></div></div></footer>
-
-<div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div>
-<div class="toast" id="toast"></div>
-</div>
+<div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div><div class="toast" id="toast"></div>
+<footer><b>كشّاف</b><span>منصتك الكشفية للتعلم، النشاط، والفريق.</span></footer>
 <script src="script.js"></script>
+</div>
 </body></html>
