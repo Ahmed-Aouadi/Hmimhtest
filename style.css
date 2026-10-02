@@ -62,3 +62,17 @@ button,.quick-links button,.post,.side-panel,.activity-list article,.group-page,
 .thread-detail-head{position:sticky;top:0;background:#fff;z-index:2}
 .thread-messages::-webkit-scrollbar{width:6px}.thread-messages::-webkit-scrollbar-thumb{background:#dfe5ea;border-radius:10px}
 @media(max-width:470px){.topbar{padding-left:3.5%;padding-right:3.5%}.top-actions{gap:5px}.icon-btn{width:36px;height:36px}.comments-preview{padding:8px}.comment-thread{padding:12px}.thread-avatar{width:39px;height:39px}}
+
+/* community workspace */
+.community-page{display:none;min-height:calc(100vh - 66px);background:#f5f7f9;border-top:1px solid var(--line)}
+.community-page.show{display:block}
+.community-shell{width:min(1080px,92%);margin:auto;padding:34px 0 55px}
+.community-page-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}
+.community-page-head h1{font-size:27px;margin:4px 0}.community-page-head p{margin:0;color:var(--muted);font-size:10px}
+.community-feed,.community-page .comments-page{width:100%;padding:20px 0 45px}
+.community-top-btn{background:#eef7fc;color:var(--blue)}
+.saved-posts-list{display:grid;gap:8px;margin-top:14px}.saved-post-item{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fafbfc}.saved-post-item>div{flex:1}.saved-post-item b,.saved-post-item small{display:block}.saved-post-item b{font-size:10px}.saved-post-item small{font-size:8px;color:var(--muted);margin-top:2px}.profile-locked-note{font-size:9px!important;color:#8a93a1!important;background:#f7f8fa;border:1px solid var(--line);padding:9px 11px;border-radius:9px}
+.field input:disabled{background:#f1f3f5;color:#7d8793;cursor:not-allowed}.post-actions button[data-action=save].active{color:var(--blue)}.post-actions button[data-action=save].active svg{fill:currentColor}
+.comment-photo{display:block;width:min(360px,100%);max-height:260px;object-fit:cover;border-radius:10px;margin-top:8px}.reply-photo{width:220px;max-height:180px}
+@media(max-width:760px){.community-shell{width:92%;padding-top:25px}.community-page-head{align-items:flex-start}.community-page-head h1{font-size:23px}.community-feed,.community-page .comments-page{padding-top:12px}}
+@media(max-width:470px){.community-page-head{gap:10px}.community-page-head .small-btn{white-space:nowrap}.saved-post-item{align-items:flex-start;flex-wrap:wrap}.saved-post-item>div{width:100%}}
