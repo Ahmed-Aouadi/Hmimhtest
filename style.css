@@ -98,3 +98,15 @@ button,.quick-links button,.post,.side-panel,.activity-list article,.group-page,
 .section-head h2{letter-spacing:-.25px}.muted-label{text-transform:none;letter-spacing:.15px}
 @media(max-width:760px){.dashboard:before{inset:10px -20% auto;height:220px}.quick-links button{min-height:112px}.activity-list article:hover{transform:none}.group-content{gap:18px}}
 @media(max-width:470px){.dashboard:before{display:none}.quick-links button{min-height:105px}.journey-stats div{padding:9px}.activity-main h3{font-size:13px}.badge-card{min-height:135px}}
+
+
+/* multi-image posts */
+.post-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:12px;overflow:hidden;border-radius:13px}
+.post-gallery.single{display:block}
+.post-gallery .post-photo{margin:0;width:100%;height:210px;max-height:320px;object-fit:cover;border-radius:0}
+.post-gallery.single .post-photo{border-radius:13px}
+.draft-gallery{margin-bottom:12px}
+.post-gallery-item{position:relative;min-width:0}
+.post-gallery-item .draft-preview{height:150px!important;border-radius:10px!important}
+.remove-post-image{position:absolute;top:7px;left:7px;width:27px;height:27px;border:0;border-radius:50%;background:#111827cc;color:#fff;font-size:18px;line-height:1;display:grid;place-items:center}
+@media(max-width:470px){.post-gallery{gap:5px}.post-gallery .post-photo{height:170px}.post-gallery-item .draft-preview{height:125px!important}}
