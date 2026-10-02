@@ -190,6 +190,7 @@ $("a[href^='#']").forEach(a=>{
 $$(".nav a,.mobile-nav a").forEach(a=>a.addEventListener("click",()=>setTimeout(mobileFocus,0)));
 window.addEventListener("hashchange",mobileFocus);
 window.addEventListener("resize",mobileFocus);
+mountPremiumIcons();
 syncTheme();
 if(localStorage.getItem("activityJoined")==="1"){const b=$("#joinActivity");if(b){b.textContent="تم التسجيل ✓";b.classList.remove("primary");b.classList.add("ghost")}}
 mobileFocus();
