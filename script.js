@@ -1,4 +1,4 @@
-const $=s=>document.querySelector(s),$=s=>document.querySelectorAll(s);
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const ICONS={
 search:'<circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path>',
 moon:'<path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 7 7 0 1 0 20 15.5Z"></path>',
