@@ -34,8 +34,14 @@ function groupView(){const g=getGroupData();show('<h2>تخصيص معلومات 
 function accountView(){show('<h2>حساب أحمد</h2><p>كشاف • المستوى 04 • 2,450 نقطة</p><div class="feature-catalog"><button class="catalog-item" onclick="go(\'group\')"><b>الفوج</b><small>معلومات ومتابعة الفوج</small></button><button class="catalog-item" onclick="go(\'badges\')"><b>الإنجازات</b><small>14 شارة مكتملة</small></button><button class="catalog-item"><b>الإشعارات</b><small>3 جديدة</small></button><button class="catalog-item"><b>الإعدادات</b><small>التفضيلات والخصوصية</small></button></div>')}
 function featuresView(){show('<h2>كل المزايا</h2><p>اختر المساحة التي تريد الوصول إليها.</p><div class="feature-catalog"><button class="catalog-item" onclick="go(\'activities\')"><b>الأنشطة</b><small>التقويم والتسجيل والحضور</small></button><button class="catalog-item" onclick="go(\'feed\')"><b>المجتمع</b><small>المنشورات والتفاعل</small></button><button class="catalog-item" onclick="go(\'group\')"><b>الفوج</b><small>المعلومات والأعضاء</small></button><button class="catalog-item" onclick="go(\'badges\')"><b>الشارات</b><small>الإنجازات والتقدم</small></button></div>')}
 function simpleView(title,text){show('<h2>'+title+'</h2><p>'+text+'</p><button class="wide-btn" onclick="closeModal()">حسنًا</button>')}
-modal.onclick=e=>{if(e.target===modal)closeModal()};document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+modal.onclick=e=>{if(e.target===modal)closeModal()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+document.addEventListener("click",e=>{
+  const trigger=e.target.closest("[data-open]");
+  if(trigger){e.preventDefault();go(trigger.dataset.open);return}
+  const hash=e.target.closest("a[href^='#']");
+  if(hash){const id=hash.getAttribute("href").slice(1);if(id){e.preventDefault();go(id)}}
+});
 $("#accountBtn").onclick=accountView;$("#profileBtn").onclick=accountView;$("#groupCustomizeBtn").onclick=groupView;$("#groupJoinBtn").onclick=()=>notify("تم إرسال طلب الانضمام إلى الفوج");$("#allFeaturesBtn").onclick=featuresView;$("#communityBtn").onclick=()=>go("feed");$("#calendarBtn").onclick=()=>simpleView("تقويم الأنشطة","05 أكتوبر — رحلة الجبل\n10 أكتوبر — حملة التشجير\n15 أكتوبر — تدريب الملاحة");$("#badgesBtn").onclick=()=>go("badges");$("#searchBtn").onclick=()=>show('<h2>بحث في كشّاف</h2><label class="field"><span>ابحث</span><input autofocus placeholder="نشاط، شارة، فوج..."></label>');
 $("#groupQuick").onclick=()=>go("group");
-$$("[data-open]").forEach(b=>b.onclick=()=>go(b.dataset.open));
 mountIcons();syncGroup();if(localStorage.getItem("activityJoined")==="1"){const b=$("#joinActivity");if(b)b.textContent="تم التسجيل ✓"}
