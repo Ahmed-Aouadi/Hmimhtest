@@ -251,7 +251,8 @@ function replyInlinePage(postId,commentId){
   box.innerHTML='<input placeholder="اكتب ردك..."><button>رد</button>';row.appendChild(box);
   box.querySelector("button").onclick=()=>{const text=box.querySelector("input").value.trim();if(!text)return;const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]"),c=list.find(x=>x.id===commentId);if(!c)return;c.replies=c.replies||[];c.replies.push({name:a.name,role:a.role,text});localStorage.setItem("comments_"+postId,JSON.stringify(list));openCommentsPage(postId);notify("تم نشر الرد")};
 }
-\nfunction commentsView(postId){
+
+function commentsView(postId){
   const demo=postId==="demo1"?[{id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[{name:"فوج الأمل",role:"قائد",text:"بانتظاركم في الموعد."}]}]:[];
   const stored=JSON.parse(localStorage.getItem("comments_"+postId)||"[]"),comments=[...demo,...stored];
   show('<div class="comments-head"><div><h2>التعليقات</h2><p>'+comments.length+' تعليق • مرتبة حسب الأحدث مع تجميع الردود.</p></div></div><div class="comments-list">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">كن أول من يشارك رأيه.</div>')+'</div><div class="comment-composer"><input id="commentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="sendComment">إرسال</button></div>');
@@ -271,7 +272,7 @@ document.addEventListener("click",e=>{
   const thread=e.target.closest(".comment-thread");if(thread){openCommentsPage(thread.dataset.thread);document.querySelector("#comments")?.scrollIntoView({behavior:"smooth"});return}
   const refresh=e.target.closest("#refreshComments");if(refresh){renderCommentHub();notify("تم تحديث النقاشات");return}
   const create=e.target.closest("#createPostBtn,#createPostHint");if(create){createPostView();return}
-  const comments=e.target.closest(".comment-link,[data-action='comments']");if(comments){const id=comments.dataset.comments||comments.closest(".post")?.dataset.postId;if(id&&!id.startsWith("demo"))commentsView(id);else commentsView(id);return}
+  const comments=e.target.closest(".comment-link,[data-action='comments']");if(comments){const id=comments.dataset.comments||comments.closest(".post")?.dataset.postId;openCommentsPage(id);document.querySelector("#comments")?.scrollIntoView({behavior:"smooth"});return}
   const menu=e.target.closest(".user-post-menu");if(menu){const id=menu.dataset.postMenu,own=menu.dataset.own==="true",a=getAccount();if(own)show('<h2>خيارات المنشور</h2><button class="catalog-item" id="editPostNow"><b>تعديل المنشور</b><small>تعديل النص أو الصورة</small></button><button class="catalog-item danger-item" id="deletePostNow"><b>حذف المنشور</b><small>حذف نهائي من حسابك</small></button>');else if(a.isAdmin)show('<h2>إدارة المنشور</h2><button class="catalog-item" id="pinPostNow"><b>تثبيت أو إلغاء التثبيت</b></button><button class="catalog-item" id="hidePostNow"><b>إخفاء المنشور</b></button><button class="catalog-item danger-item" id="deletePostNow"><b>حذف المنشور</b></button>');else return;
     const edit=$("#editPostNow"),del=$("#deletePostNow"),pin=$("#pinPostNow"),hide=$("#hidePostNow");if(edit)edit.onclick=()=>createPostView(id);if(del)del.onclick=()=>{savePosts(readPosts().filter(p=>p.id!==id));closeModal();renderUserPosts();notify("تم حذف المنشور")};if(pin)pin.onclick=()=>{const p=readPosts(),x=p.find(z=>z.id===id);if(x){x.pinned=!x.pinned;x.status="published";savePosts(p);closeModal();renderUserPosts();notify(x.pinned?"تم تثبيت المنشور":"تم إلغاء التثبيت")}};if(hide)hide.onclick=()=>{const p=readPosts(),x=p.find(z=>z.id===id);if(x){x.status="hidden";savePosts(p);closeModal();renderUserPosts();notify("تم إخفاء المنشور")}};return;
   }
