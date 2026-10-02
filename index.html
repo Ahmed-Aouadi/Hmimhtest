@@ -11,8 +11,8 @@
 <div class="app">
 <header class="topbar">
   <a class="brand" href="#home"><span class="brand-mark" data-icon="compass"></span><span><b>كشّاف</b><small>منصتك الكشفية</small></span></a>
-  <nav class="topnav"><a class="active" href="#home">الرئيسية</a><a href="#feed">المجتمع</a><a href="#comments">التعليقات</a><a href="#activities">الأنشطة</a><a href="#group">الفوج</a><a href="#badges">الإنجازات</a></nav>
-  <div class="top-actions"><button class="icon-btn" id="searchBtn" aria-label="بحث" data-icon="search"></button><button class="avatar" id="accountBtn" aria-label="الحساب">أ</button></div>
+  <nav class="topnav"><a class="active" href="#home">الرئيسية</a><a href="#activities">الأنشطة</a><a href="#group">الفوج</a><a href="#badges">الإنجازات</a></nav>
+  <div class="top-actions"><button class="icon-btn community-top-btn" id="communityTopBtn" aria-label="المجتمع" data-icon="comment"></button><button class="icon-btn" id="searchBtn" aria-label="بحث" data-icon="search"></button><button class="avatar" id="accountBtn" aria-label="الحساب">أ</button></div>
 </header>
 
 <main id="home">
@@ -22,17 +22,8 @@
     <button class="profile-chip" id="profileBtn"><span class="avatar" id="profileAvatar">أ</span><span><b id="profileName">أحمد</b><small id="profileRole">كشاف • مستوى 04</small></span><span class="chevron" data-icon="chevron"></span></button>
   </div>
   <div class="dashboard-grid">
-    <article class="journey-card">
-      <div class="card-head"><div><span class="muted-label">رحلتك</span><h2>التقدم هذا الأسبوع</h2></div><span class="round-icon" data-icon="trend"></span></div>
-      <div class="progress-row"><strong>72%</strong><span>+180 نقطة هذا الأسبوع</span></div>
-      <div class="progress"><i style="width:72%"></i></div>
-      <div class="journey-stats"><div><b>14</b><span>شارة</span></div><div><b>38</b><span>نشاط</span></div><div><b>76%</b><span>مهارات</span></div></div>
-    </article>
-    <article class="today-card">
-      <div class="card-head"><div><span class="muted-label">القادم</span><h2>رحلة الجبل</h2></div><span class="status">غدًا</span></div>
-      <p>مشي • ملاحة • ألعاب فريق</p><div class="event-line"><span data-icon="clock"></span><b>08:00</b><span data-icon="pin"></span><b>نقطة التجمع</b></div>
-      <button class="wide-btn" id="joinActivity">سجّل مشاركتي</button>
-    </article>
+    <article class="journey-card"><div class="card-head"><div><span class="muted-label">رحلتك</span><h2>التقدم هذا الأسبوع</h2></div><span class="round-icon" data-icon="trend"></span></div><div class="progress-row"><strong>72%</strong><span>+180 نقطة هذا الأسبوع</span></div><div class="progress"><i style="width:72%"></i></div><div class="journey-stats"><div><b>14</b><span>شارة</span></div><div><b>38</b><span>نشاط</span></div><div><b>76%</b><span>مهارات</span></div></div></article>
+    <article class="today-card"><div class="card-head"><div><span class="muted-label">القادم</span><h2>رحلة الجبل</h2></div><span class="status">غدًا</span></div><p>مشي • ملاحة • ألعاب فريق</p><div class="event-line"><span data-icon="clock"></span><b>08:00</b><span data-icon="pin"></span><b>نقطة التجمع</b></div><button class="wide-btn" id="joinActivity">سجّل مشاركتي</button></article>
   </div>
 </section>
 
@@ -43,63 +34,48 @@
     <button data-open="badges"><span data-icon="badge"></span><b>الشارات</b><small>14 مكتملة</small></button>
     <button data-open="skills"><span data-icon="compass"></span><b>المهارات</b><small>76% تقدم</small></button>
     <button data-open="tasks"><span data-icon="check"></span><b>المهام</b><small>5 اليوم</small></button>
-    <button href="#group" id="groupQuick"><span data-icon="users"></span><b>الفوج</b><small>48 عضوًا</small></button>
+    <button id="groupQuick"><span data-icon="users"></span><b>الفوج</b><small>48 عضوًا</small></button>
   </div>
 </section>
 
-<section id="feed" class="content-section">
- <div class="section-head"><div><span class="muted-label">آخر المستجدات</span><h2>من مجتمعك</h2></div><div class="section-actions"><button class="text-btn" id="communityBtn">فتح المجتمع</button><button class="post-create-btn" id="createPostBtn">+ منشور جديد</button></div></div>
- <div class="composer-hint" id="composerHint"><b>شارك شيئًا مع مجتمعك</b><span>المنشور يُراجع حسب إعدادات الفوج قبل ظهوره للجميع.</span><button id="createPostHint">اكتب منشورًا</button></div><div class="feed-layout">
-  <div class="posts">
-   <article class="post" data-post-id="demo1"><div class="post-head"><span class="post-avatar">ف</span><div><b>فوج الأمل</b><small>قائد • 02 أكتوبر 2026 • منذ 25 دقيقة</small></div><button class="more" data-icon="more" aria-label="خيارات"></button></div><p>غدًا موعد رحلتنا إلى الجبل. لا تنسوا الماء، القبعة، والحضور في الموعد.</p><div class="post-image mountain-image"><span data-icon="mountain"></span></div><div class="post-actions"><button data-action="like" data-icon="heart">24</button><button data-action="comments" data-icon="comment">8</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="demo1">عرض التعليقات والرد</button></div></article>
-   <article class="post" data-post-id="demo2"><div class="post-head"><span class="post-avatar blue">س</span><div><b>سارة</b><small>قائدة • 02 أكتوبر 2026 • منذ ساعتين</small></div><button class="more" data-icon="more" aria-label="خيارات"></button></div><p>أحسنتُم! تم فتح شارة جديدة لأعضاء الفوج الذين أكملوا تحدي الإسعافات الأولية.</p><div class="achievement"><span data-icon="badge"></span><div><b>شارة الإسعافات الأولية</b><small>+100 نقطة</small></div></div><div class="post-actions"><button data-action="like" data-icon="heart">41</button><button data-action="comments" data-icon="comment">12</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="demo2">عرض التعليقات والرد</button></div></article>
-  </div>
-  <aside class="side-panel"><div class="panel-title"><b>نشاط الفوج</b><span class="live-dot">مباشر</span></div><div class="member"><span class="mini-avatar">م</span><div><b>محمد</b><small>أكمل شارة المخيم</small></div><time>الآن</time></div><div class="member"><span class="mini-avatar orange">ي</span><div><b>ياسين</b><small>سجّل في رحلة الجبل</small></div><time>10د</time></div><div class="member"><span class="mini-avatar purple">ن</span><div><b>نور</b><small>نشرت تحديثًا</small></div><time>32د</time></div></aside>
- </div>
-</section>
+<section id="activities" class="content-section gray"><div class="section-head"><div><span class="muted-label">الميدان</span><h2>أنشطة قادمة</h2></div><button class="text-btn" id="calendarBtn">التقويم</button></div><div class="activity-list">
+<article><div class="date-box"><b>05</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag green">مغامرة</span><h3>رحلة استكشافية إلى الجبل</h3><p>مشي، ملاحة، ألعاب فريق واستكشاف الطبيعة.</p></div><div class="activity-meta"><span data-icon="clock">08:00</span><span data-icon="users">32 مكانًا</span><button class="small-btn" onclick="activityJoin()">انضم</button></div></div></article>
+<article><div class="date-box"><b>10</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag orange">خدمة</span><h3>حملة نظافة وتشجير</h3><p>مبادرة لخدمة الحي وزراعة الأشجار.</p></div><div class="activity-meta"><span data-icon="clock">09:30</span><span data-icon="users">24 مكانًا</span><button class="small-btn activity-detail" data-activity="cleanup">التفاصيل</button></div></div></article>
+<article><div class="date-box"><b>15</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag blue">مهارة</span><h3>تدريب الملاحة</h3><p>الخريطة، البوصلة، الاتجاهات والعمل الميداني.</p></div><div class="activity-meta"><span data-icon="clock">16:00</span><span data-icon="users">18 مكانًا</span><button class="small-btn activity-detail" data-activity="navigation">التفاصيل</button></div></div></article>
+</div></section>
 
-<section id="activities" class="content-section gray">
- <div class="section-head"><div><span class="muted-label">الميدان</span><h2>أنشطة قادمة</h2></div><button class="text-btn" id="calendarBtn">التقويم</button></div>
- <div class="activity-list">
-  <article><div class="date-box"><b>05</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag green">مغامرة</span><h3>رحلة استكشافية إلى الجبل</h3><p>مشي، ملاحة، ألعاب فريق واستكشاف الطبيعة.</p></div><div class="activity-meta"><span data-icon="clock">08:00</span><span data-icon="users">32 مكانًا</span><button class="small-btn" onclick="activityJoin()">انضم</button></div></div></article>
-  <article><div class="date-box"><b>10</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag orange">خدمة</span><h3>حملة نظافة وتشجير</h3><p>مبادرة لخدمة الحي وزراعة الأشجار.</p></div><div class="activity-meta"><span data-icon="clock">09:30</span><span data-icon="users">24 مكانًا</span><button class="small-btn activity-detail" data-activity="cleanup">التفاصيل</button></div></div></article>
-  <article><div class="date-box"><b>15</b><small>أكتوبر</small></div><div class="activity-main"><div><span class="tag blue">مهارة</span><h3>تدريب الملاحة</h3><p>الخريطة، البوصلة، الاتجاهات والعمل الميداني.</p></div><div class="activity-meta"><span data-icon="clock">16:00</span><span data-icon="users">18 مكانًا</span><button class="small-btn activity-detail" data-activity="navigation">التفاصيل</button></div></div></article>
- </div>
-</section>
+<section id="group" class="content-section"><div class="section-head"><div><span class="muted-label">مساحتك الجماعية</span><h2>الفوج</h2></div><button class="text-btn" id="groupCustomizeBtn">تخصيص</button></div><article class="group-page"><div class="group-hero"><div class="group-avatar" id="groupAvatar">أ</div><div><span>فوج كشّاف</span><h2 id="groupName">فوج الأمل</h2><p id="groupLocation">ورقلة • الجزائر</p></div><span class="group-online"><i></i> نشط</span></div><div class="group-content"><div><h3>عن الفوج</h3><p id="groupBio">فوج شبابي يجمع بين التعلم والخدمة والمغامرة والعمل الجماعي في بيئة كشفية منظمة.</p><div class="group-info-grid"><div><small>القائد</small><b id="groupLeader">أحمد محمد</b></div><div><small>الاجتماع</small><b id="groupMeeting">السبت • 15:00</b></div><div><small>الأعضاء</small><b id="groupMembers">48 عضوًا</b></div></div></div><div class="group-numbers"><div><b id="groupActivities">12</b><small>نشاط هذا الشهر</small></div><div><b id="groupBadges">86</b><small>شارة مكتسبة</small></div><button class="wide-btn" id="groupJoinBtn">طلب الانضمام</button></div></div></article></section>
 
-<section id="group" class="content-section">
- <div class="section-head"><div><span class="muted-label">مساحتك الجماعية</span><h2>الفوج</h2></div><button class="text-btn" id="groupCustomizeBtn">تخصيص</button></div>
- <article class="group-page">
-   <div class="group-hero"><div class="group-avatar" id="groupAvatar">أ</div><div><span>فوج كشّاف</span><h2 id="groupName">فوج الأمل</h2><p id="groupLocation">ورقلة • الجزائر</p></div><span class="group-online"><i></i> نشط</span></div>
-   <div class="group-content"><div><h3>عن الفوج</h3><p id="groupBio">فوج شبابي يجمع بين التعلم والخدمة والمغامرة والعمل الجماعي في بيئة كشفية منظمة.</p><div class="group-info-grid"><div><small>القائد</small><b id="groupLeader">أحمد محمد</b></div><div><small>الاجتماع</small><b id="groupMeeting">السبت • 15:00</b></div><div><small>الأعضاء</small><b id="groupMembers">48 عضوًا</b></div></div></div><div class="group-numbers"><div><b id="groupActivities">12</b><small>نشاط هذا الشهر</small></div><div><b id="groupBadges">86</b><small>شارة مكتسبة</small></div><button class="wide-btn" id="groupJoinBtn">طلب الانضمام</button></div></div>
- </article>
-</section>
+<section id="skills" class="content-section"><div class="section-head"><div><span class="muted-label">تطورك</span><h2>المهارات</h2></div><button class="text-btn" id="skillsDetailsBtn">خطة التطور</button></div><div class="skills-grid">
+<article class="skill-card"><div class="skill-top"><span data-icon="compass"></span><b>الملاحة</b><strong>76%</strong></div><div class="progress"><i style="width:76%"></i></div><small>الخريطة، البوصلة وتحديد الاتجاهات</small></article>
+<article class="skill-card"><div class="skill-top"><span data-icon="shield"></span><b>الإسعافات الأولية</b><strong>82%</strong></div><div class="progress"><i style="width:82%"></i></div><small>الاستجابة الأولية والسلامة الميدانية</small></article>
+<article class="skill-card"><div class="skill-top"><span data-icon="camp"></span><b>التخييم</b><strong>64%</strong></div><div class="progress"><i style="width:64%"></i></div><small>إعداد المخيم، النار والتنظيم</small></article>
+<article class="skill-card"><div class="skill-top"><span data-icon="leaf"></span><b>البيئة</b><strong>91%</strong></div><div class="progress"><i style="width:91%"></i></div><small>حماية الطبيعة والعمل التطوعي</small></article>
+</div></section>
 
-<section id="skills" class="content-section">
- <div class="section-head"><div><span class="muted-label">تطورك</span><h2>المهارات</h2></div><button class="text-btn" id="skillsDetailsBtn">خطة التطور</button></div>
- <div class="skills-grid">
-  <article class="skill-card"><div class="skill-top"><span data-icon="compass"></span><b>الملاحة</b><strong>76%</strong></div><div class="progress"><i style="width:76%"></i></div><small>الخريطة، البوصلة وتحديد الاتجاهات</small></article>
-  <article class="skill-card"><div class="skill-top"><span data-icon="shield"></span><b>الإسعافات الأولية</b><strong>82%</strong></div><div class="progress"><i style="width:82%"></i></div><small>الاستجابة الأولية والسلامة الميدانية</small></article>
-  <article class="skill-card"><div class="skill-top"><span data-icon="camp"></span><b>التخييم</b><strong>64%</strong></div><div class="progress"><i style="width:64%"></i></div><small>إعداد المخيم، النار والتنظيم</small></article>
-  <article class="skill-card"><div class="skill-top"><span data-icon="leaf"></span><b>البيئة</b><strong>91%</strong></div><div class="progress"><i style="width:91%"></i></div><small>حماية الطبيعة والعمل التطوعي</small></article>
- </div>
-</section>
+<section id="tasks" class="content-section gray"><div class="section-head"><div><span class="muted-label">اليوم</span><h2>مهامك اليومية</h2></div><button class="text-btn" id="resetTasksBtn">إعادة التعيين</button></div><div class="tasks-card">
+<div class="task-row" data-task="1"><button class="task-check"><span data-icon="check"></span></button><div><b>راجع حقيبة الإسعافات</b><small>مهمة سلامة • 20 نقطة</small></div><strong>20</strong></div>
+<div class="task-row" data-task="2"><button class="task-check"><span data-icon="check"></span></button><div><b>تدرّب على قراءة الخريطة</b><small>مهارة الملاحة • 30 نقطة</small></div><strong>30</strong></div>
+<div class="task-row" data-task="3"><button class="task-check"><span data-icon="check"></span></button><div><b>شارك نصيحة في المجتمع</b><small>مشاركة • 15 نقطة</small></div><strong>15</strong></div>
+<div class="task-row" data-task="4"><button class="task-check"><span data-icon="check"></span></button><div><b>حضّر لرحلة الجبل</b><small>نشاط الغد • 25 نقطة</small></div><strong>25</strong></div>
+</div></section>
 
-<section id="tasks" class="content-section gray">
- <div class="section-head"><div><span class="muted-label">اليوم</span><h2>مهامك اليومية</h2></div><button class="text-btn" id="resetTasksBtn">إعادة التعيين</button></div>
- <div class="tasks-card">
-  <div class="task-row" data-task="1"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>راجع حقيبة الإسعافات</b><small>مهمة سلامة • 20 نقطة</small></div><strong>20</strong></div>
-  <div class="task-row" data-task="2"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>تدرّب على قراءة الخريطة</b><small>مهارة الملاحة • 30 نقطة</small></div><strong>30</strong></div>
-  <div class="task-row" data-task="3"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>شارك نصيحة في المجتمع</b><small>مشاركة • 15 نقطة</small></div><strong>15</strong></div>
-  <div class="task-row" data-task="4"><button class="task-check" aria-label="إكمال المهمة"><span data-icon="check"></span></button><div><b>حضّر لرحلة الجبل</b><small>نشاط الغد • 25 نقطة</small></div><strong>25</strong></div>
- </div>
-</section>
-
-<section id="badges" class="content-section gray">
- <div class="section-head"><div><span class="muted-label">إنجازاتك</span><h2>الشارات</h2></div><button class="text-btn" id="badgesBtn">المعرض الكامل</button></div>
- <div class="badges-grid"><article class="badge-card featured"><span data-icon="badge"></span><div><small>قيد التقدم</small><h3>سيد الملاحة</h3><p>أكمل 4 تحديات ميدانية.</p><div class="progress"><i style="width:68%"></i></div><b>68%</b></div></article><article class="badge-card"><span data-icon="shield"></span><h3>الإسعافات الأولية</h3><small>مكتملة • 240 نقطة</small></article><article class="badge-card"><span data-icon="camp"></span><h3>خبير المخيم</h3><small>مكتملة • 180 نقطة</small></article><article class="badge-card"><span data-icon="leaf"></span><h3>حامي البيئة</h3><small>6 من 10 مهام</small></article></div>
-</section>
+<section id="badges" class="content-section gray"><div class="section-head"><div><span class="muted-label">إنجازاتك</span><h2>الشارات</h2></div><button class="text-btn" id="badgesBtn">المعرض الكامل</button></div><div class="badges-grid"><article class="badge-card featured"><span data-icon="badge"></span><div><small>قيد التقدم</small><h3>سيد الملاحة</h3><p>أكمل 4 تحديات ميدانية.</p><div class="progress"><i style="width:68%"></i></div><b>68%</b></div></article><article class="badge-card"><span data-icon="shield"></span><h3>الإسعافات الأولية</h3><small>مكتملة • 240 نقطة</small></article><article class="badge-card"><span data-icon="camp"></span><h3>خبير المخيم</h3><small>مكتملة • 180 نقطة</small></article><article class="badge-card"><span data-icon="leaf"></span><h3>حامي البيئة</h3><small>6 من 10 مهام</small></article></div></section>
 </main>
+
+<section id="communityPage" class="community-page">
+  <div class="community-shell">
+    <div class="community-page-head"><div><span class="muted-label">مساحة مستقلة</span><h1>المجتمع والمنشورات</h1><p>شارك، ناقش، احفظ وتابع منشورات أفراد مجتمعك.</p></div><button class="small-btn" id="backHomeFromCommunity">العودة للرئيسية</button></div>
+    <div id="feed" class="content-section community-feed"><div class="section-head"><div><span class="muted-label">آخر المستجدات</span><h2>من مجتمعك</h2></div><div class="section-actions"><button class="text-btn" id="openCommentsHub">التعليقات</button><button class="post-create-btn" id="createPostBtn">+ منشور جديد</button></div></div>
+      <div class="composer-hint" id="composerHint"><b>شارك شيئًا مع مجتمعك</b><span>المنشور يُراجع حسب إعدادات الفوج قبل ظهوره للجميع.</span><button id="createPostHint">اكتب منشورًا</button></div>
+      <div class="feed-layout"><div class="posts">
+        <article class="post" data-post-id="demo1"><div class="post-head"><span class="post-avatar">ف</span><div><b>فوج الأمل</b><small>قائد • 02 أكتوبر 2026 • منذ 25 دقيقة</small></div><button class="more" data-icon="more" aria-label="خيارات"></button></div><p>غدًا موعد رحلتنا إلى الجبل. لا تنسوا الماء، القبعة، والحضور في الموعد.</p><div class="post-image mountain-image"><span data-icon="mountain"></span></div><div class="post-actions"><button data-action="like" data-icon="heart">24</button><button data-action="comments" data-icon="comment">8</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="demo1">عرض التعليقات والرد</button></div></article>
+        <article class="post" data-post-id="demo2"><div class="post-head"><span class="post-avatar blue">س</span><div><b>سارة</b><small>قائدة • 02 أكتوبر 2026 • منذ ساعتين</small></div><button class="more" data-icon="more" aria-label="خيارات"></button></div><p>أحسنتُم! تم فتح شارة جديدة لأعضاء الفوج الذين أكملوا تحدي الإسعافات الأولية.</p><div class="achievement"><span data-icon="badge"></span><div><b>شارة الإسعافات الأولية</b><small>+100 نقطة</small></div></div><div class="post-actions"><button data-action="like" data-icon="heart">41</button><button data-action="comments" data-icon="comment">12</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="demo2">عرض التعليقات والرد</button></div></article>
+      </div><aside class="side-panel"><div class="panel-title"><b>نشاط الفوج</b><span class="live-dot">مباشر</span></div><div class="member"><span class="mini-avatar">م</span><div><b>محمد</b><small>أكمل شارة المخيم</small></div><time>الآن</time></div><div class="member"><span class="mini-avatar orange">ي</span><div><b>ياسين</b><small>سجّل في رحلة الجبل</small></div><time>10د</time></div><div class="member"><span class="mini-avatar purple">ن</span><div><b>نور</b><small>نشرت تحديثًا</small></div><time>32د</time></div></aside></div>
+    </div>
+    <section id="comments" class="comments-page"><div class="section-head"><div><span class="muted-label">مساحة النقاش</span><h2>التعليقات</h2><p class="section-subtitle">تابع النقاشات والردود في مكان واحد.</p></div><button class="text-btn" id="refreshComments">تحديث</button></div><div class="comments-hub-layout"><div class="comment-threads" id="commentThreads"></div><aside class="comments-side"><div class="comments-side-card"><span class="round-icon" data-icon="comment"></span><b>نقاشات مجتمعك</b><p>كل تعليق ورد يظهر هنا بشكل مرتب.</p></div></aside></div></section>
+  </div>
+</section>
 
 <div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div><div class="toast" id="toast"></div>
 <footer><b>كشّاف</b><span>منصتك الكشفية للتعلم، النشاط، والفريق.</span></footer>
