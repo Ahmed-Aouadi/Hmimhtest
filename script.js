@@ -244,19 +244,26 @@ function renderCommentHub(){
   const threads=getCommentThreads();
   box.innerHTML=threads.map(t=>'<button class="comment-thread" data-thread="'+t.id+'"><span class="thread-avatar">'+esc(t.author.charAt(0))+'</span><span class="thread-main"><b>'+esc(t.author)+' <small>'+esc(t.role||"")+'</small></b><p>'+esc(t.text.slice(0,105))+'</p><span>'+t.count+' تعليقات • '+esc(t.latest)+'</span></span><span class="thread-arrow">‹</span></button>').join("")||'<div class="empty-state">لا توجد نقاشات بعد.</div>';
 }
-function openCommentsPage(postId){
-  const title=postId==="demo1"?"فوج الأمل":(readPosts().find(p=>p.id===postId)?.authorName||"المنشور");
+function getPostComments(postId){
   const demoComments=postId==="demo1"?
     [{id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[{name:"فوج الأمل",role:"قائد",text:"بانتظاركم في الموعد."}]}]:[];
-  const storedComments=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");
-  const comments=[...demoComments,...storedComments.filter(sc=>!demoComments.some(dc=>dc.id===sc.id))];
-  const box=$("#commentThreads");
-  if(!box)return;
-  box.innerHTML='<div class="thread-detail"><button class="back-comments" id="backComments">← كل النقاشات</button><div class="thread-detail-head"><span class="thread-avatar">'+esc(title.charAt(0))+'</span><div><b>'+esc(title)+'</b><small>نقاش المنشور</small></div></div><div class="thread-messages">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">لا توجد تعليقات بعد. ابدأ النقاش.</div>')+'</div><div class="comment-composer"><input id="pageCommentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="pageSendComment">إرسال</button></div></div>';
-  $("#backComments").onclick=renderCommentHub;
-  $("#pageSendComment").onclick=()=>{const text=$("#pageCommentInput").value.trim();if(!text)return;const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);openCommentsPage(postId);notify("تم نشر التعليق")};
-  $(".reply-comment").forEach(b=>b.onclick=()=>commentComposerView(postId,b.dataset.commentId));
-  $(".like-comment").forEach(b=>{const key="likedComment_"+postId+"_"+b.dataset.commentId;if(localStorage.getItem(key)==="1"){b.classList.add("active");b.textContent="♥ أعجبني"}b.onclick=()=>{const active=!b.classList.contains("active");b.classList.toggle("active",active);b.textContent=active?"♥ أعجبني":"♡ إعجاب";localStorage.setItem(key,active?"1":"0")}});
+  let storedComments=[];
+  try{storedComments=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");if(!Array.isArray(storedComments))storedComments=[]}catch(e){storedComments=[]}
+  return [...demoComments,...storedComments.filter(sc=>!demoComments.some(dc=>dc.id===sc.id))];
+}
+function openCommentsPage(postId){
+  const section=$("#comments"),box=$("#commentThreads");
+  if(!section||!box)return;
+  const demoPost=postId==="demo1",post=readPosts().find(p=>p.id===postId);
+  const title=demoPost?"فوج الأمل":(post?.authorName||"المنشور");
+  const comments=getPostComments(postId);
+  box.innerHTML='<div class="thread-detail"><button class="back-comments" id="backComments">← كل النقاشات</button><div class="thread-detail-head"><span class="thread-avatar">'+esc(title.charAt(0)||"م")+'</span><div><b>'+esc(title)+'</b><small>نقاش المنشور • '+comments.length+' تعليق</small></div></div><div class="thread-messages">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">لا توجد تعليقات بعد. ابدأ النقاش.</div>')+'</div><div class="comment-composer"><input id="pageCommentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="pageSendComment">إرسال</button></div></div>';
+  section.classList.add("comments-open");
+  $("#backComments").onclick=()=>{section.classList.remove("comments-open");renderCommentHub()};
+  $("#pageSendComment").onclick=()=>{const text=$("#pageCommentInput").value.trim();if(!text)return;const a=getAccount(),list=getPostComments(postId).filter(c=>!(demoPost&&c.id==="c1"));list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);openCommentsPage(postId);notify("تم نشر التعليق")};
+  box.querySelectorAll(".reply-comment").forEach(b=>b.onclick=()=>commentComposerView(postId,b.dataset.commentId));
+  box.querySelectorAll(".like-comment").forEach(b=>{const key="likedComment_"+postId+"_"+b.dataset.commentId;if(localStorage.getItem(key)==="1"){b.classList.add("active");b.textContent="♥ أعجبني"}b.onclick=()=>{const active=!b.classList.contains("active");b.classList.toggle("active",active);b.textContent=active?"♥ أعجبني":"♡ إعجاب";localStorage.setItem(key,active?"1":"0")}});
+  requestAnimationFrame(()=>section.scrollIntoView({behavior:"smooth",block:"start"}));
 }
 function replyInlinePage(postId,commentId){
   const existing=$("#replyBox-"+commentId);if(existing){existing.remove();return}
