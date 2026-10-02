@@ -16,3 +16,22 @@ footer{width:min(1080px,92%);margin:auto;padding:35px 0 45px;color:var(--muted);
 
 .skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.skill-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow)}.skill-top{display:flex;align-items:center;gap:8px;margin-bottom:15px}.skill-top span{width:34px;height:34px;border-radius:10px;background:#eef7fc;color:var(--blue);display:grid;place-items:center}.skill-top b{font-size:11px;flex:1}.skill-top strong{font-size:10px;color:var(--blue)}.skill-card .progress{margin:0 0 10px}.skill-card small{font-size:8px;color:var(--muted);line-height:1.8}.tasks-card{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.task-row{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line);transition:.2s}.task-row:last-child{border-bottom:0}.task-row.done{background:#f5faf7}.task-row.done b{text-decoration:line-through;color:#87918e}.task-check{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#f7f8fa;color:var(--green);display:grid;place-items:center;flex:none}.task-row.done .task-check{background:#e8f8ef;border-color:#c9ecd7}.task-check svg{width:17px}.task-row>div{flex:1}.task-row b,.task-row small{display:block}.task-row b{font-size:11px}.task-row small{font-size:8px;color:var(--muted)}.task-row>strong{font-size:10px;color:var(--orange)}.post-actions button.active{color:#e25567}.post-actions button.active svg{fill:currentColor}.activity-detail{min-width:70px}.modal-box .modal-actions{display:flex;gap:8px;margin-top:15px}.modal-box .modal-actions button{flex:1}.notice-list{display:grid;gap:8px;margin:16px 0}.notice{padding:13px;border:1px solid var(--line);border-radius:12px;background:#fafbfc;display:flex;gap:10px}.notice>span{color:var(--blue)}.notice b,.notice small{display:block}.notice b{font-size:10px}.notice small{font-size:8px;color:var(--muted)}.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);font-size:10px}.toggle{width:40px;height:23px;border:0;border-radius:20px;background:#dfe4e9;padding:3px}.toggle i{display:block;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}.toggle.on{background:var(--green)}.toggle.on i{transform:translateX(-17px)}
 @media(max-width:760px){.skills-grid{grid-template-columns:1fr 1fr}}@media(max-width:470px){.skills-grid{grid-template-columns:1fr}.task-row{padding:13px}}
+
+/* subtle visual polish */
+:root{--shadow:0 10px 34px rgba(15,23,42,.065)}
+body{background:#f5f7f9}
+.topbar{box-shadow:0 1px 0 rgba(15,23,42,.02)}
+button,.quick-links button,.post,.side-panel,.activity-list article,.group-page,.badge-card,.skill-card,.tasks-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.icon-btn:hover,.avatar:hover,.text-btn:hover{filter:brightness(.97)}
+.journey-card:hover,.today-card:hover,.post:hover,.side-panel:hover,.activity-list article:hover,.skill-card:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(15,23,42,.075)}
+.quick-links button:hover{transform:translateY(-3px)}
+.small-btn:hover{background:#dff1fa}
+.wide-btn:hover{background:#1a2436;transform:translateY(-1px)}
+.section-head{margin-bottom:20px}
+.content-section{scroll-margin-top:78px}
+.activity-list article{min-height:104px}
+.group-page{box-shadow:0 12px 38px rgba(15,23,42,.07)}
+.modal-box{border:1px solid rgba(15,23,42,.06)}
+.field input:focus,.field textarea:focus{outline:none;border-color:#a8d9ee;box-shadow:0 0 0 3px rgba(34,158,217,.09);background:#fff}
+@media(max-width:760px){.dashboard,.quick-area,.content-section{width:92%}.content-section.gray{padding-left:4%;padding-right:4%}.dashboard{padding-top:32px}.section-head h2{font-size:20px}.welcome-row p{font-size:11px}}
+@media(max-width:470px){.topbar{height:62px}.brand b{font-size:17px}.dashboard{padding-bottom:25px}.welcome-row h1{margin-top:5px}.journey-card,.today-card{padding:18px}.quick-links button{padding:14px}.content-section{padding-bottom:45px}.post{padding:15px}.mountain-image{height:155px}}
