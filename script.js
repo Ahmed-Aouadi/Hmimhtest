@@ -197,14 +197,27 @@ function postElement(p){
 function createPostView(editId){
   const posts=readPosts(), old=editId?posts.find(p=>p.id===editId):null,a=getAccount();
   if(editId&&!old)return;
-  show('<h2>'+(old?"تعديل المنشور":"منشور جديد")+'</h2><div class="post-author-preview"><span class="post-avatar">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc(a.name.charAt(0)))+'</span><div><b>'+esc(a.name)+'</b><small>'+esc(a.role)+' • @'+esc(a.username)+'</small></div></div><label class="field"><span>نص المنشور</span><textarea id="postText" rows="6" placeholder="اكتب شيئًا مفيدًا لمجتمعك...">'+(old?esc(old.text):"")+'</textarea></label><label class="post-image-upload"><input id="postImageFile" type="file" accept="image/*"><span>إضافة صورة للمنشور</span><small id="postImageName">'+(old&&old.image?"تم اختيار صورة":"اختياري")+'</small></label><img id="postImagePreview" class="post-photo draft-preview" '+(old&&old.image?'src="'+old.image+'"':'style="display:none"')+' alt=""><button class="wide-btn" id="savePostBtn">'+(old?"حفظ التعديل":"نشر")+'</button>');
-  let image=old?.image||"";
-  $("#postImageFile").onchange=e=>{const file=e.target.files[0];if(!file)return;const rd=new FileReader();rd.onload=()=>{image=rd.result;$("#postImagePreview").src=image;$("#postImagePreview").style.display="block";$("#postImageName").textContent=file.name};rd.readAsDataURL(file)};
+  show('<h2>'+(old?"تعديل المنشور":"منشور جديد")+'</h2><div class="post-author-preview"><span class="post-avatar">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc(a.name.charAt(0)))+'</span><div><b>'+esc(a.name)+'</b><small>'+esc(a.role)+' • @'+esc(a.username)+'</small></div></div><label class="field"><span>نص المنشور</span><textarea id="postText" rows="6" placeholder="اكتب شيئًا مفيدًا لمجتمعك...">'+(old?esc(old.text):"")+'</textarea></label><label class="post-image-upload"><input id="postImageFile" type="file" accept="image/*" multiple><span>إضافة صور للمنشور</span><small id="postImageName">'+((old?.images?.length||old?.image)?((old?.images?.length||1)+" صور مختارة"):"اختياري — يمكنك اختيار عدة صور")+'</small></label><div id="postImagePreview" class="post-gallery draft-gallery"></div><button class="wide-btn" id="savePostBtn">'+(old?"حفظ التعديل":"نشر")+'</button>');
+  let images=old?.images?.length?[...old.images]:(old?.image?[old.image]:[]);
+  const preview=$("#postImagePreview");
+  const renderDraftImages=()=>{
+    preview.innerHTML=images.map((im,i)=>'<div class="post-gallery-item"><img class="post-photo draft-preview" src="'+im+'" alt="صورة '+(i+1)+'"><button type="button" class="remove-post-image" data-index="'+i+'" aria-label="حذف الصورة">×</button></div>').join("");
+    preview.style.display=images.length?"grid":"none";
+    $("#postImageName").textContent=images.length?(images.length+" صور مختارة"):"اختياري — يمكنك اختيار عدة صور";
+    preview.querySelectorAll(".remove-post-image").forEach(btn=>btn.onclick=()=>{images.splice(Number(btn.dataset.index),1);renderDraftImages()});
+  };
+  renderDraftImages();
+  $("#postImageFile").onchange=e=>{
+    const files=[...e.target.files];
+    if(!files.length)return;
+    Promise.all(files.map(file=>new Promise(resolve=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.readAsDataURL(file)}))).then(next=>{images=[...images,...next];renderDraftImages();e.target.value=""});
+  };
   $("#savePostBtn").onclick=()=>{
-    const text=$("#postText").value.trim();if(!text&&!image){notify("اكتب نصًا أو أضف صورة");return}
+    const text=$("#postText").value.trim();if(!text&&!images.length){notify("اكتب نصًا أو أضف صورة");return}
     const mode=a.isAdmin?"auto":(localStorage.getItem("publishMode")||"review");
-    if(old){old.text=text;old.image=image;savePosts(posts);closeModal();renderUserPosts();notify("تم تعديل المنشور");return}
-    const p={id:"p"+Date.now(),authorName:a.name,authorUsername:a.username,role:a.role,avatar:a.avatar,text,image,createdAt:Date.now(),status:mode==="auto"?"published":"pending",likes:0,comments:0,pinned:false};
+    if(old){old.text=text;old.images=images;delete old.image;savePosts(posts);closeModal();renderUserPosts();notify("تم تعديل المنشور");return}
+    const image=images[0]||"";
+    const p={id:"p"+Date.now(),authorName:a.name,authorUsername:a.username,role:a.role,avatar:a.avatar,text,image,images,createdAt:Date.now(),status:mode==="auto"?"published":"pending",likes:0,comments:0,pinned:false};
     posts.push(p);savePosts(posts);closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
   };
 }
