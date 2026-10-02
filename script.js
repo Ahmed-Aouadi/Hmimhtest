@@ -220,7 +220,38 @@ function adminPostsView(){
   show('<h2>إدارة المنشورات</h2><p>مراجعة المنشورات والتحكم في ظهورها.</p><div class="admin-posts">'+(all.length?all.reverse().map(p=>'<div class="admin-post-item"><div><b>'+esc(p.authorName)+' • '+esc(p.role)+'</b><small>'+esc(p.text?.slice(0,90)||"منشور بصورة")+' • '+(p.status==="published"?"منشور":"قيد المراجعة")+(p.pinned?" • مثبت":"")+'</small></div><div class="admin-actions"><button data-admin="approve" data-id="'+p.id+'">نشر</button><button data-admin="hide" data-id="'+p.id+'">إخفاء</button><button data-admin="pin" data-id="'+p.id+'">'+(p.pinned?"إلغاء التثبيت":"تثبيت")+'</button><button class="danger-btn" data-admin="delete" data-id="'+p.id+'">حذف</button></div></div>').join(""):'<div class="empty-state">لا توجد منشورات للمراجعة.</div>')+'</div>');
   $$(".admin-actions button").forEach(b=>b.onclick=()=>{const id=b.dataset.id,action=b.dataset.admin,p=readPosts(),i=p.findIndex(x=>x.id===id);if(i<0)return;if(action==="approve"){p[i].status="published"}if(action==="hide"){p[i].status="hidden"}if(action==="pin"){p[i].pinned=!p[i].pinned;p[i].status="published"}if(action==="delete"){p.splice(i,1)}savePosts(p);adminPostsView();renderUserPosts();notify("تم تحديث المنشور")});
 }
-function commentsView(postId){
+
+function getCommentThreads(){
+  const demo=[{id:"demo1",author:"فوج الأمل",role:"قائد",text:"غدًا موعد رحلتنا إلى الجبل. لا تنسوا الماء، القبعة، والحضور في الموعد.",count:8,latest:"منذ 12 دقيقة"}];
+  const posts=readPosts().filter(p=>p.status==="published").map(p=>({id:p.id,author:p.authorName,role:p.role,text:p.text||"منشور بصورة",count:p.comments||0,latest:"منشور جديد"}));
+  return [...demo,...posts];
+}
+function renderCommentHub(){
+  const box=$("#commentThreads");if(!box)return;
+  const threads=getCommentThreads();
+  box.innerHTML=threads.map(t=>'<button class="comment-thread" data-thread="'+t.id+'"><span class="thread-avatar">'+esc(t.author.charAt(0))+'</span><span class="thread-main"><b>'+esc(t.author)+' <small>'+esc(t.role||"")+'</small></b><p>'+esc(t.text.slice(0,105))+'</p><span>'+t.count+' تعليقات • '+esc(t.latest)+'</span></span><span class="thread-arrow">‹</span></button>').join("")||'<div class="empty-state">لا توجد نقاشات بعد.</div>';
+}
+function openCommentsPage(postId){
+  const title=postId==="demo1"?"فوج الأمل":(readPosts().find(p=>p.id===postId)?.authorName||"المنشور");
+  const comments=postId==="demo1"?
+    [{id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[{name:"فوج الأمل",role:"قائد",text:"بانتظاركم في الموعد."}]}]:
+    JSON.parse(localStorage.getItem("comments_"+postId)||"[]");
+  const box=$("#commentThreads");
+  if(!box)return;
+  box.innerHTML='<div class="thread-detail"><button class="back-comments" id="backComments">← كل النقاشات</button><div class="thread-detail-head"><span class="thread-avatar">'+esc(title.charAt(0))+'</span><div><b>'+esc(title)+'</b><small>نقاش المنشور</small></div></div><div class="thread-messages">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">لا توجد تعليقات بعد. ابدأ النقاش.</div>')+'</div><div class="comment-composer"><input id="pageCommentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="pageSendComment">إرسال</button></div></div>';
+  $("#backComments").onclick=renderCommentHub;
+  $("#pageSendComment").onclick=()=>{const text=$("#pageCommentInput").value.trim();if(!text)return;const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);openCommentsPage(postId);notify("تم نشر التعليق")};
+  $(".reply-comment").forEach(b=>b.onclick=()=>replyInlinePage(postId,b.dataset.commentId));
+  $(".like-comment").forEach(b=>b.onclick=()=>{b.classList.toggle("active");b.textContent=b.classList.contains("active")?"♥ أعجبني":"♡ إعجاب"});
+}
+function replyInlinePage(postId,commentId){
+  const existing=$("#replyBox-"+commentId);if(existing){existing.remove();return}
+  const btn=document.querySelector('[data-comment-id="'+commentId+'"]');if(!btn)return;
+  const row=btn.closest(".comment-body");const box=document.createElement("div");box.className="inline-reply";box.id="replyBox-"+commentId;
+  box.innerHTML='<input placeholder="اكتب ردك..."><button>رد</button>';row.appendChild(box);
+  box.querySelector("button").onclick=()=>{const text=box.querySelector("input").value.trim();if(!text)return;const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]"),c=list.find(x=>x.id===commentId);if(!c)return;c.replies=c.replies||[];c.replies.push({name:a.name,role:a.role,text});localStorage.setItem("comments_"+postId,JSON.stringify(list));openCommentsPage(postId);notify("تم نشر الرد")};
+}
+\nfunction commentsView(postId){
   const demo=postId==="demo1"?[{id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[{name:"فوج الأمل",role:"قائد",text:"بانتظاركم في الموعد."}]}]:[];
   const stored=JSON.parse(localStorage.getItem("comments_"+postId)||"[]"),comments=[...demo,...stored];
   show('<div class="comments-head"><div><h2>التعليقات</h2><p>'+comments.length+' تعليق • مرتبة حسب الأحدث مع تجميع الردود.</p></div></div><div class="comments-list">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">كن أول من يشارك رأيه.</div>')+'</div><div class="comment-composer"><input id="commentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="sendComment">إرسال</button></div>');
@@ -237,6 +268,8 @@ function incrementPostComments(id){
   const p=readPosts(),i=p.findIndex(x=>x.id===id);if(i>=0){p[i].comments=(p[i].comments||0)+1;savePosts(p)}
 }
 document.addEventListener("click",e=>{
+  const thread=e.target.closest(".comment-thread");if(thread){openCommentsPage(thread.dataset.thread);document.querySelector("#comments")?.scrollIntoView({behavior:"smooth"});return}
+  const refresh=e.target.closest("#refreshComments");if(refresh){renderCommentHub();notify("تم تحديث النقاشات");return}
   const create=e.target.closest("#createPostBtn,#createPostHint");if(create){createPostView();return}
   const comments=e.target.closest(".comment-link,[data-action='comments']");if(comments){const id=comments.dataset.comments||comments.closest(".post")?.dataset.postId;if(id&&!id.startsWith("demo"))commentsView(id);else commentsView(id);return}
   const menu=e.target.closest(".user-post-menu");if(menu){const id=menu.dataset.postMenu,own=menu.dataset.own==="true",a=getAccount();if(own)show('<h2>خيارات المنشور</h2><button class="catalog-item" id="editPostNow"><b>تعديل المنشور</b><small>تعديل النص أو الصورة</small></button><button class="catalog-item danger-item" id="deletePostNow"><b>حذف المنشور</b><small>حذف نهائي من حسابك</small></button>');else if(a.isAdmin)show('<h2>إدارة المنشور</h2><button class="catalog-item" id="pinPostNow"><b>تثبيت أو إلغاء التثبيت</b></button><button class="catalog-item" id="hidePostNow"><b>إخفاء المنشور</b></button><button class="catalog-item danger-item" id="deletePostNow"><b>حذف المنشور</b></button>');else return;
@@ -245,4 +278,4 @@ document.addEventListener("click",e=>{
   const save=e.target.closest("[data-action='save']");if(save){save.classList.toggle("active");notify(save.classList.contains("active")?"تم حفظ المنشور":"تمت إزالة المنشور من المحفوظات");return}
 });
 $("#accountBtn").onclick=accountView;$("#profileBtn").onclick=accountView;
-syncAccount();renderUserPosts();
+syncAccount();renderUserPosts();renderCommentHub();
