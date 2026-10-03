@@ -351,7 +351,7 @@ function createPostView(editId){
       notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
     }catch(err){
       if(btn){btn.disabled=false;btn.textContent=old?"حفظ التعديل":"نشر";}
-      notify("تعذر حفظ المنشور. جرّب صورة واحدة أو صورًا أصغر.");
+      notify(err&&err.message==="STORAGE_QUOTA"?"مساحة التخزين المحلية ممتلئة. تم الحفاظ على المنشورات، احذف بعض البيانات القديمة ثم حاول مجددًا.":"تعذر حفظ المنشور. حاول مرة أخرى.");
     }
   };
 }
