@@ -207,18 +207,49 @@ function createPostView(editId){
     preview.querySelectorAll(".remove-post-image").forEach(btn=>btn.onclick=()=>{images.splice(Number(btn.dataset.index),1);renderDraftImages()});
   };
   renderDraftImages();
+  const compressPostImage=file=>new Promise((resolve,reject)=>{
+    if(!file)return resolve("");
+    const rd=new FileReader();
+    rd.onload=()=>{
+      const src=rd.result, img=new Image();
+      img.onload=()=>{
+        const max=1280, scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));
+        const w=Math.max(1,Math.round((img.naturalWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
+        const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
+        const ctx=canvas.getContext("2d");ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL("image/jpeg",0.72));
+      };
+      img.onerror=()=>resolve(src);
+      img.src=src;
+    };
+    rd.onerror=reject;
+    rd.readAsDataURL(file);
+  });
   $("#postImageFile").onchange=e=>{
     const files=[...e.target.files];
     if(!files.length)return;
-    Promise.all(files.map(file=>new Promise(resolve=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.readAsDataURL(file)}))).then(next=>{images=[...images,...next];renderDraftImages();e.target.value=""});
+    const remaining=Math.max(0,8-images.length);
+    if(files.length>remaining){notify("يمكن إضافة 8 صور كحد أقصى");e.target.value="";return}
+    Promise.all(files.map(compressPostImage)).then(next=>{
+      images=[...images,...next.filter(Boolean)];
+      renderDraftImages();
+      e.target.value="";
+    }).catch(()=>notify("تعذر تجهيز إحدى الصور، حاول مرة أخرى"));
   };
   $("#savePostBtn").onclick=()=>{
     const text=$("#postText").value.trim();if(!text&&!images.length){notify("اكتب نصًا أو أضف صورة");return}
     const mode=a.isAdmin?"auto":(localStorage.getItem("publishMode")||"review");
-    if(old){old.text=text;old.images=images;delete old.image;savePosts(posts);closeModal();renderUserPosts();notify("تم تعديل المنشور");return}
-    const image=images[0]||"";
-    const p={id:"p"+Date.now(),authorName:a.name,authorUsername:a.username,role:a.role,avatar:a.avatar,text,image,images,createdAt:Date.now(),status:mode==="auto"?"published":"pending",likes:0,comments:0,pinned:false};
-    posts.push(p);savePosts(posts);closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
+    try{
+      if(old){
+        old.text=text;old.images=images;old.image=images[0]||"";savePosts(posts);closeModal();renderUserPosts();notify("تم تعديل المنشور");return
+      }
+      const image=images[0]||"";
+      const p={id:"p"+Date.now(),authorName:a.name,authorUsername:a.username,role:a.role,avatar:a.avatar,text,image,images:[...images],createdAt:Date.now(),status:mode==="auto"?"published":"pending",likes:0,comments:0,pinned:false};
+      posts.push(p);savePosts(posts);closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
+    }catch(err){
+      if(old){const idx=posts.findIndex(p=>p.id===old.id);if(idx>=0)posts[idx]=old}
+      notify("تعذر حفظ المنشور. الصور كبيرة جدًا أو التخزين ممتلئ.");
+    }
   };
 }
 function myPostsView(){
