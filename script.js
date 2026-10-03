@@ -212,19 +212,29 @@ function createPostView(editId){
     preview.querySelectorAll(".remove-post-image").forEach(btn=>btn.onclick=()=>{images.splice(Number(btn.dataset.index),1);renderDraftImages()});
   };
   renderDraftImages();
-  const compressPostImage=file=>new Promise((resolve,reject)=>{
+  const compressPostImage=(file,max=900,quality=0.58)=>new Promise((resolve,reject)=>{
     if(!file)return resolve("");
     const rd=new FileReader();
     rd.onload=()=>{
       const src=rd.result, img=new Image();
       img.onload=()=>{
-        const max=1280, scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));
+        const naturalMax=Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height);
+        const scale=Math.min(1,max/naturalMax);
         const w=Math.max(1,Math.round((img.naturalWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
         const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
-        const ctx=canvas.getContext("2d");ctx.drawImage(img,0,0,w,h);
-        resolve(canvas.toDataURL("image/jpeg",0.72));
+        const ctx=canvas.getContext("2d");
+        if(!ctx){reject(new Error("canvas"));return}
+        ctx.drawImage(img,0,0,w,h);
+        let out=canvas.toDataURL("image/jpeg",quality);
+        if(out.length>420000){
+          const s=Math.min(1,700/Math.max(w,h)),c2=document.createElement("canvas");
+          c2.width=Math.max(1,Math.round(w*s));c2.height=Math.max(1,Math.round(h*s));
+          c2.getContext("2d").drawImage(canvas,0,0,c2.width,c2.height);
+          out=c2.toDataURL("image/jpeg",0.48);
+        }
+        resolve(out);
       };
-      img.onerror=()=>resolve(src);
+      img.onerror=()=>reject(new Error("image"));
       img.src=src;
     };
     rd.onerror=reject;
@@ -241,7 +251,7 @@ function createPostView(editId){
       e.target.value="";
     }).catch(()=>notify("تعذر تجهيز إحدى الصور، حاول مرة أخرى"));
   };
-  $("#savePostBtn").onclick=()=>{
+  $("#savePostBtn").onclick=async()=>{
     const text=$("#postText").value.trim();if(!text&&!images.length){notify("اكتب نصًا أو أضف صورة");return}
     const mode=a.isAdmin?"auto":"review";
     try{
@@ -250,10 +260,20 @@ function createPostView(editId){
       }
       const image=images[0]||"";
       const p={id:"p"+Date.now(),authorName:a.name,authorUsername:a.username,role:a.role,avatar:a.avatar,text,image,images:[...images],createdAt:Date.now(),status:mode==="auto"?"published":"pending",likes:0,comments:0,pinned:false};
-      posts.push(p);savePosts(posts);closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
+      const candidate=[...posts,p];
+      if(JSON.stringify(candidate).length>3600000){
+        const reduced=await Promise.all(images.map(async src=>{
+          const blob=await (await fetch(src)).blob();
+          return compressPostImage(new File([blob],"post.jpg",{type:"image/jpeg"}),700,0.45);
+        }));
+        p.images=reduced.filter(Boolean);p.image=p.images[0]||"";
+      }
+      const finalPosts=[...posts,p];
+      if(JSON.stringify(finalPosts).length>3900000)throw new Error("storage-budget");
+      savePosts(finalPosts);closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
     }catch(err){
       if(old){const idx=posts.findIndex(p=>p.id===old.id);if(idx>=0)posts[idx]=old}
-      notify("تعذر حفظ المنشور. الصور كبيرة جدًا أو التخزين ممتلئ.");
+      notify("تعذر حفظ المنشور. تم ضغط الصور تلقائيًا، حاول تقليل عدد الصور أو اختيار صور أصغر.");
     }
   };
 }
