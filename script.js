@@ -301,27 +301,50 @@ function createPostView(editId){
 
       let finalPosts=[...posts,p];
 
-      try{
-        savePosts(finalPosts);
-      }catch(firstErr){
-        const emergency=await Promise.all(images.map(src=>compressImageSource(src,620,0.52,90000)));
-        p.images=emergency.filter(Boolean);
+      const trySavePosts=async()=>{
+        try{
+          savePosts(finalPosts);
+          return true;
+        }catch(e){}
+
+        // First: make the new images smaller while keeping them usable.
+        p.images=(await Promise.all(images.map(src=>compressImageSource(src,620,0.54,85000)))).filter(Boolean);
         finalPosts=[...posts,p];
         try{
           savePosts(finalPosts);
-        }catch(secondErr){
-          const compactExisting=await Promise.all(finalPosts.map(async item=>{
-            const copy={...item};
-            const oldImgs=Array.isArray(copy.images)&&copy.images.length?copy.images:(copy.image?[copy.image]:[]);
-            if(oldImgs.length){
-              copy.images=(await Promise.all(oldImgs.map(src=>compressImageSource(src,520,0.48,70000)))).filter(Boolean);
-              copy.image="";
-            }
-            return copy;
-          }));
-          savePosts(compactExisting);
-        }
-      }
+          return true;
+        }catch(e){}
+
+        // Second: old posts are the usual source of localStorage exhaustion.
+        // Keep their text/metadata but remove their heavy image payloads first.
+        const compactExisting=finalPosts.map((item,index)=>{
+          const copy={...item};
+          const oldImgs=Array.isArray(copy.images)&&copy.images.length?copy.images:(copy.image?[copy.image]:[]);
+          if(index!==finalPosts.length-1 && oldImgs.length){
+            copy.images=[];
+            copy.image="";
+            copy._imagesArchived=true;
+          }
+          return copy;
+        });
+        finalPosts=compactExisting;
+        try{
+          savePosts(finalPosts);
+          return true;
+        }catch(e){}
+
+        // Third: free only this app's non-essential notification cache.
+        try{
+          Object.keys(localStorage).filter(k=>k.startsWith("socialNotifications_")).forEach(k=>localStorage.removeItem(k));
+          savePosts(finalPosts);
+          return true;
+        }catch(e){}
+
+        return false;
+      };
+
+      const saved=await trySavePosts();
+      if(!saved)throw new Error("STORAGE_QUOTA");
 
       if(p.status==="published")pushSocialNotification(a.username,"publish","كشّاف","تم نشر منشورك بنجاح");
       closeModal();renderUserPosts();
