@@ -169,3 +169,55 @@ button,.quick-links button,.post,.side-panel,.activity-list article,.group-page,
 .profile-avatar-xl img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
 .social-profile-main .profile-avatar-xl{overflow:hidden;flex:none}
 .account-avatar-lg img,.post-avatar img,.mini-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+
+
+/* ---- Social feed polish ---- */
+.post{transition:transform .18s ease,box-shadow .18s ease}
+.post:hover{box-shadow:0 12px 34px rgba(15,23,42,.07)}
+.post-head .post-avatar{overflow:hidden;flex:none}
+.post-head .post-avatar img{width:100%;height:100%;display:block;object-fit:cover}
+.post>p{margin:14px 0 15px}
+.post-gallery{display:grid;gap:5px;margin:4px 0 2px;overflow:hidden;border-radius:15px;background:#f2f5f7}
+.post-gallery-item{position:relative;display:block;min-width:0;padding:0;border:0;background:#eef1f4;overflow:hidden;cursor:zoom-in}
+.post-gallery-item .post-photo{display:block;width:100%;height:100%;max-height:none;object-fit:cover;background:#eef1f4;transition:transform .25s ease,filter .2s ease}
+.post-gallery-item:hover .post-photo{transform:scale(1.015);filter:brightness(.97)}
+.post-gallery.gallery-count-1{grid-template-columns:1fr}
+.post-gallery.gallery-count-1 .post-gallery-item{aspect-ratio:16/10}
+.post-gallery.gallery-count-1 .post-photo{object-fit:contain}
+.post-gallery.gallery-count-2{grid-template-columns:1fr 1fr}
+.post-gallery.gallery-count-2 .post-gallery-item{aspect-ratio:1/1}
+.post-gallery.gallery-count-3{grid-template-columns:1.35fr .85fr;grid-template-rows:1fr 1fr}
+.post-gallery.gallery-count-3 .post-gallery-item{aspect-ratio:auto}
+.post-gallery.gallery-count-3 .post-gallery-item:first-child{grid-row:1/3}
+.post-gallery.gallery-count-4{grid-template-columns:1fr 1fr}
+.post-gallery.gallery-count-4 .post-gallery-item{aspect-ratio:1/1}
+.post-actions{border-top:1px solid #f0f2f5;padding-top:9px;margin-top:10px;gap:4px;justify-content:space-between}
+.post-actions button{flex:1;justify-content:center;min-height:34px;border-radius:9px;transition:.16s}
+.post-actions button:hover{background:#f5f7f9;color:var(--ink)}
+.post-actions button.active{background:#edf7fc;color:var(--blue);font-weight:800}
+.comments-preview{margin-top:9px;padding-top:8px;border-top:1px solid #f4f5f7;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.comments-preview b{font-size:9px;color:#687281}
+.comment-link{border:0;background:none;color:var(--blue);font-size:9px;font-weight:800;padding:5px}
+.post-image-upload{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px dashed #cfd7e1;border-radius:13px;padding:13px 15px;background:#fbfcfd;cursor:pointer;transition:.18s}
+.post-image-upload:hover{border-color:#9bcfe8;background:#f6fbfe}
+.post-image-upload input{display:none}
+.post-image-upload span{font-size:11px;font-weight:800;color:var(--ink)}
+.post-image-upload small{font-size:9px;color:var(--muted)}
+.draft-gallery{margin-top:10px;padding:5px;grid-template-columns:repeat(2,1fr)!important}
+.draft-gallery .post-gallery-item{aspect-ratio:1/1;border-radius:10px}
+.draft-gallery .post-photo{object-fit:cover}
+.remove-post-image{position:absolute;top:7px;left:7px;width:28px;height:28px;border:0;border-radius:50%;background:#172033e8;color:#fff;font-size:19px;line-height:1;display:grid;place-items:center;z-index:2;box-shadow:0 3px 10px #0002}
+.remove-post-image:hover{background:#0f172a}
+.modal-box{scrollbar-width:thin}
+@media(max-width:760px){
+  .post{padding:14px;border-radius:16px}
+  .post-gallery{margin-left:-1px;margin-right:-1px}
+  .post-gallery.gallery-count-1 .post-gallery-item{aspect-ratio:4/3}
+  .post>p{font-size:10.5px;line-height:1.9}
+  .post-actions{gap:2px}
+  .post-actions button{font-size:9px}
+  .post-actions .ui-icon{width:15px;height:15px}
+  .comments-preview{display:block}
+  .comments-preview .comment-link{padding-right:0}
+  .draft-gallery{grid-template-columns:repeat(2,1fr)!important}
+}
