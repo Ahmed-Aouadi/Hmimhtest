@@ -193,7 +193,8 @@ function postElement(p){
   const art=document.createElement("article");art.className="post user-post"+(p.pinned?" pinned-post":"");art.dataset.postId=p.id;
   const status=p.status!=="published"?'<span class="pending-label">قيد المراجعة</span>':(p.pinned?'<span class="pinned-label">مثبت</span>':"");
   const imgs=Array.isArray(p.images)&&p.images.length?p.images:(p.image?[p.image]:[]);
-  const media=imgs.length?'<div class="post-gallery">'+imgs.map((im,i)=>'<div class="post-gallery-item"><img class="post-photo" src="'+im+'" alt="صورة المنشور '+(i+1)+'"></div>').join("")+'</div>':"";
+  const galleryCount=Math.min(imgs.length,4);
+  const media=imgs.length?'<div class="post-gallery gallery-count-'+galleryCount+'">'+imgs.map((im,i)=>'<button type="button" class="post-gallery-item" data-post-photo="'+i+'" aria-label="فتح الصورة"><img class="post-photo" loading="'+(i===0?"eager":"lazy")+'" decoding="async" src="'+esc(im)+'" alt="صورة المنشور '+(i+1)+'"></button>').join("")+'</div>':"";
   art.innerHTML='<div class="post-head"><span class="post-avatar">'+(p.avatar?'<img src="'+p.avatar+'" alt="">':esc(p.authorName.charAt(0)))+'</span><div><b>'+esc(p.authorName)+(p.role?' • '+esc(p.role):"")+'</b><small>'+formatDate(p.createdAt)+' • '+status+'</small></div><button class="more user-post-menu" data-post-menu="'+p.id+'" data-own="'+own+'" aria-label="خيارات">•••</button></div><p>'+esc(p.text||"").replace(/\n/g,"<br>")+'</p>'+media+'<div class="post-actions"><button data-action="like" data-icon="heart">'+(p.likes||0)+'</button><button data-action="comments" data-icon="comment">'+(p.comments||0)+'</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="'+p.id+'">عرض التعليقات والرد</button></div>';
   const s=art.querySelector('[data-action="save"]');if(s&&getSavedPostIds().includes(p.id)){s.classList.add("active");const label=s.querySelector(".icon-label");if(label)label.textContent="محفوظ"}
   return art;}
@@ -688,3 +689,16 @@ document.addEventListener("click",e=>{
   }
 });
 document.addEventListener("click",e=>{const b=e.target.closest("#feedMessagesBtn");if(b){e.preventDefault();messagesView()}});
+
+
+/* post media polish */
+document.addEventListener("click",e=>{
+  const photo=e.target.closest(".post-gallery-item[data-post-photo]");
+  if(!photo)return;
+  const post=photo.closest(".post");
+  if(!post)return;
+  const p=readPosts().find(x=>x.id===post.dataset.postId);
+  if(!p)return;
+  const imgs=Array.isArray(p.images)&&p.images.length?p.images:(p.image?[p.image]:[]);
+  openGalleryViewer(imgs,Number(photo.dataset.postPhoto)||0);
+});
