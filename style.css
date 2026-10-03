@@ -110,3 +110,28 @@ button,.quick-links button,.post,.side-panel,.activity-list article,.group-page,
 .post-gallery-item .draft-preview{height:150px!important;border-radius:10px!important}
 .remove-post-image{position:absolute;top:7px;left:7px;width:27px;height:27px;border:0;border-radius:50%;background:#111827cc;color:#fff;font-size:18px;line-height:1;display:grid;place-items:center}
 @media(max-width:470px){.post-gallery{gap:5px}.post-gallery .post-photo{height:170px}.post-gallery-item .draft-preview{height:125px!important}}
+
+/* image viewer, downloads and saved posts */
+.post-photo,.comment-photo{cursor:zoom-in}
+.post-gallery-item .post-photo{transition:transform .18s ease,filter .18s ease}
+.post-gallery-item:hover .post-photo{filter:brightness(.96)}
+.image-viewer{display:grid;gap:12px}
+.image-viewer-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.image-viewer-head b{font-size:13px}
+.image-viewer-stage{min-height:220px;max-height:65vh;background:#0f172a;border-radius:15px;display:grid;place-items:center;overflow:hidden}
+.image-viewer-stage img{display:block;max-width:100%;max-height:65vh;width:auto;height:auto;object-fit:contain;border-radius:10px}
+.image-viewer-actions{display:flex;gap:8px}
+.image-download{text-align:center;text-decoration:none;display:block}
+.saved-post-item{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.saved-post-item:last-child{border-bottom:0}
+.saved-post-item b,.saved-post-item small{display:block}
+.saved-post-item b{font-size:10px}
+.saved-post-item small{font-size:8px;color:var(--muted)}
+.empty-state{padding:22px;text-align:center;color:var(--muted);font-size:10px;border:1px dashed var(--line);border-radius:12px}
+@media(max-width:470px){
+  .image-viewer-stage{min-height:180px;max-height:58vh}
+  .image-viewer-stage img{max-height:58vh}
+  .saved-post-item{grid-template-columns:1fr auto}
+  .saved-post-item .remove-saved{grid-column:2;grid-row:1}
+  .saved-post-item .open-saved{grid-column:2;grid-row:2}
+}
