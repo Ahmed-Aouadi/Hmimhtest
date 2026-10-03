@@ -203,6 +203,42 @@ function createPostView(editId){
   show('<h2>'+(old?"تعديل المنشور":"منشور جديد")+'</h2><div class="post-author-preview"><span class="post-avatar">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc(a.name.charAt(0)))+'</span><div><b>'+esc(a.name)+'</b><small>'+esc(a.role)+' • @'+esc(a.username)+'</small></div></div><label class="field"><span>نص المنشور</span><textarea id="postText" rows="6" placeholder="اكتب شيئًا مفيدًا لمجتمعك...">'+(old?esc(old.text):"")+'</textarea></label><label class="post-image-upload"><input id="postImageFile" type="file" accept="image/*" multiple><span>إضافة صور للمنشور</span><small id="postImageName">'+((old?.images?.length||old?.image)?((old?.images?.length||1)+" صور مختارة"):"اختياري — يمكنك اختيار عدة صور")+'</small></label><div id="postImagePreview" class="post-gallery draft-gallery"></div><button class="wide-btn" id="savePostBtn">'+(old?"حفظ التعديل":"نشر")+'</button>');
   let images=old?.images?.length?[...old.images]:(old?.image?[old.image]:[]);
   const preview=$("#postImagePreview");
+
+  const compressImageSource=(src,max=900,quality=0.68,maxChars=170000)=>new Promise((resolve,reject)=>{
+    if(!src)return resolve("");
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.naturalWidth||img.width,h=img.naturalHeight||img.height;
+      const naturalMax=Math.max(w,h);
+      const initialScale=Math.min(1,max/naturalMax);
+      w=Math.max(1,Math.round(w*initialScale));h=Math.max(1,Math.round(h*initialScale));
+      let attempt=0,out="";
+      while(attempt<5){
+        const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
+        const ctx=canvas.getContext("2d");
+        if(!ctx){reject(new Error("canvas"));return}
+        ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
+        ctx.drawImage(img,0,0,w,h);
+        out=canvas.toDataURL("image/jpeg",quality);
+        if(out.length<=maxChars)break;
+        const scale=attempt<2?0.82:0.72;
+        w=Math.max(1,Math.round(w*scale));h=Math.max(1,Math.round(h*scale));
+        quality=Math.max(0.48,quality-0.07);
+        attempt++;
+      }
+      resolve(out);
+    };
+    img.onerror=()=>reject(new Error("image"));
+    img.src=src;
+  });
+
+  const compressFile=(file)=>new Promise((resolve,reject)=>{
+    const rd=new FileReader();
+    rd.onload=()=>compressImageSource(rd.result,900,0.68,170000).then(resolve).catch(reject);
+    rd.onerror=reject;
+    rd.readAsDataURL(file);
+  });
+
   const renderDraftImages=()=>{
     preview.innerHTML=images.map((im,i)=>'<div class="post-gallery-item"><img class="post-photo draft-preview" src="'+im+'" alt="صورة '+(i+1)+'"><button type="button" class="remove-post-image" data-index="'+i+'" aria-label="حذف الصورة">×</button></div>').join("");
     preview.style.display=images.length?"grid":"none";
@@ -210,68 +246,88 @@ function createPostView(editId){
     preview.querySelectorAll(".remove-post-image").forEach(btn=>btn.onclick=()=>{images.splice(Number(btn.dataset.index),1);renderDraftImages()});
   };
   renderDraftImages();
-  const compressPostImage=(file,max=1100,quality=0.78)=>new Promise((resolve,reject)=>{
-    if(!file)return resolve("");
-    const rd=new FileReader();
-    rd.onload=()=>{
-      const src=rd.result, img=new Image();
-      img.onload=()=>{
-        const naturalMax=Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height);
-        const scale=Math.min(1,max/naturalMax);
-        const w=Math.max(1,Math.round((img.naturalWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
-        const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
-        const ctx=canvas.getContext("2d");
-        if(!ctx){reject(new Error("canvas"));return}
-        ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.drawImage(img,0,0,w,h);
-        let out=canvas.toDataURL("image/jpeg",quality);
-        if(out.length>420000){
-          const s=Math.min(1,700/Math.max(w,h)),c2=document.createElement("canvas");
-          c2.width=Math.max(1,Math.round(w*s));c2.height=Math.max(1,Math.round(h*s));
-          c2.getContext("2d").drawImage(canvas,0,0,c2.width,c2.height);
-          out=c2.toDataURL("image/jpeg",0.62);
-        }
-        resolve(out);
-      };
-      img.onerror=()=>reject(new Error("image"));
-      img.src=src;
-    };
-    rd.onerror=reject;
-    rd.readAsDataURL(file);
-  });
-  $("#postImageFile").onchange=e=>{
+
+  $("#postImageFile").onchange=async e=>{
     const files=[...e.target.files];
     if(!files.length)return;
     const remaining=Math.max(0,8-images.length);
     if(files.length>remaining){notify("يمكن إضافة 8 صور كحد أقصى");e.target.value="";return}
-    Promise.all(files.map(compressPostImage)).then(next=>{
+    try{
+      const next=await Promise.all(files.map(compressFile));
       images=[...images,...next.filter(Boolean)];
       renderDraftImages();
       e.target.value="";
-    }).catch(()=>notify("تعذر تجهيز إحدى الصور، حاول مرة أخرى"));
-  };
-  $("#savePostBtn").onclick=async()=>{
-    const text=$("#postText").value.trim();if(!text&&!images.length){notify("اكتب نصًا أو أضف صورة");return}
-    const mode=a.isAdmin?"auto":"review";
-    try{
-      if(old){
-        old.text=text;old.images=images;old.image=images[0]||"";savePosts(posts);closeModal();renderUserPosts();notify("تم تعديل المنشور");return
-      }
-      const image=images[0]||"";
-      const p={id:"p"+Date.now(),authorName:a.name,authorUsername:a.username,role:a.role,avatar:a.avatar,text,image,images:[...images],createdAt:Date.now(),status:mode==="auto"?"published":"pending",likes:0,comments:0,pinned:false};
-      const candidate=[...posts,p];
-      if(JSON.stringify(candidate).length>3600000){
-        const reduced=await Promise.all(images.map(async src=>{
-          const blob=await (await fetch(src)).blob();
-          return compressPostImage(new File([blob],"post.jpg",{type:"image/jpeg"}),700,0.45);
-        }));
-        p.images=reduced.filter(Boolean);p.image=p.images[0]||"";
-      }
-      const finalPosts=[...posts,p];
-      if(JSON.stringify(finalPosts).length>3900000)throw new Error("storage-budget");
-      savePosts(finalPosts);if(p.status==="published")pushSocialNotification(a.username,"publish","كشّاف","تم نشر منشورك بنجاح");closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
     }catch(err){
-      if(old){const idx=posts.findIndex(p=>p.id===old.id);if(idx>=0)posts[idx]=old}
-      notify("تعذر حفظ المنشور. تم ضغط الصور تلقائيًا، حاول تقليل عدد الصور أو اختيار صور أصغر.");
+      e.target.value="";
+      notify("تعذر تجهيز إحدى الصور، حاول مرة أخرى");
+    }
+  };
+
+  $("#savePostBtn").onclick=async()=>{
+    const text=$("#postText").value.trim();
+    if(!text&&!images.length){notify("اكتب نصًا أو أضف صورة");return}
+    const mode=a.isAdmin?"auto":"review";
+    const btn=$("#savePostBtn");
+    if(btn){btn.disabled=true;btn.textContent="جارٍ الحفظ...";}
+    try{
+      const compactImages=await Promise.all(images.map(src=>compressImageSource(src,900,0.68,170000)));
+      images=compactImages.filter(Boolean);
+
+      if(old){
+        old.text=text;
+        old.images=images;
+        old.image="";
+        savePosts(posts);
+        closeModal();renderUserPosts();notify("تم تعديل المنشور");
+        return;
+      }
+
+      const p={
+        id:"p"+Date.now(),
+        authorName:a.name,
+        authorUsername:a.username,
+        role:a.role,
+        avatar:a.avatar,
+        text,
+        images:[...images],
+        image:"",
+        createdAt:Date.now(),
+        status:mode==="auto"?"published":"pending",
+        likes:0,
+        comments:0,
+        pinned:false
+      };
+
+      let finalPosts=[...posts,p];
+
+      try{
+        savePosts(finalPosts);
+      }catch(firstErr){
+        const emergency=await Promise.all(images.map(src=>compressImageSource(src,620,0.52,90000)));
+        p.images=emergency.filter(Boolean);
+        finalPosts=[...posts,p];
+        try{
+          savePosts(finalPosts);
+        }catch(secondErr){
+          const compactExisting=await Promise.all(finalPosts.map(async item=>{
+            const copy={...item};
+            const oldImgs=Array.isArray(copy.images)&&copy.images.length?copy.images:(copy.image?[copy.image]:[]);
+            if(oldImgs.length){
+              copy.images=(await Promise.all(oldImgs.map(src=>compressImageSource(src,520,0.48,70000)))).filter(Boolean);
+              copy.image="";
+            }
+            return copy;
+          }));
+          savePosts(compactExisting);
+        }
+      }
+
+      if(p.status==="published")pushSocialNotification(a.username,"publish","كشّاف","تم نشر منشورك بنجاح");
+      closeModal();renderUserPosts();
+      notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
+    }catch(err){
+      if(btn){btn.disabled=false;btn.textContent=old?"حفظ التعديل":"نشر";}
+      notify("تعذر حفظ المنشور. جرّب صورة واحدة أو صورًا أصغر.");
     }
   };
 }
