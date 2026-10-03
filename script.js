@@ -97,8 +97,7 @@ function activityDetails(type){
 function skillsView(){show('<h2>خطة تطوير المهارات</h2><p>ركز هذا الأسبوع على المهارات الأقل تقدمًا.</p><div class="notice-list"><div class="notice"><span data-icon="compass"></span><div><b>الملاحة — 76%</b><small>أكمل تحدي قراءة خريطة واحد للوصول إلى 80%.</small></div></div><div class="notice"><span data-icon="camp"></span><div><b>التخييم — 64%</b><small>شارك في نشاط تجهيز مخيم للحصول على تقدم إضافي.</small></div></div></div><button class="wide-btn" onclick="go(\'tasks\')">عرض المهام المرتبطة</button>')}
 function loadTasks(){const done=JSON.parse(localStorage.getItem("doneTasks")||"[]");$$(".task-row").forEach(row=>row.classList.toggle("done",done.includes(row.dataset.task)))}
 function toggleTask(row){
-  const done=JSON.parse(localStorage.getItem("doneTasks")||"[]"),id=row.dataset.task;
-  const next=done.includes(id)?done.filter(x=>x!==id):[...done,id];
+  const done=JSON.parse(localStorage.getItem("doneTasks")||"[]"),id=row.dataset.task;  const next=done.includes(id)?done.filter(x=>x!==id):[...done,id];
   localStorage.setItem("doneTasks",JSON.stringify(next));row.classList.toggle("done",next.includes(id));notify(next.includes(id)?"أحسنت! تمت إضافة نقاط المهمة":"تم إلغاء إكمال المهمة");
 }
 modal.onclick=e=>{if(e.target===modal)closeModal()};
@@ -197,8 +196,7 @@ function postElement(p){
   const media=imgs.length?'<div class="post-gallery">'+imgs.map((im,i)=>'<div class="post-gallery-item"><img class="post-photo" src="'+im+'" alt="صورة المنشور '+(i+1)+'"></div>').join("")+'</div>':"";
   art.innerHTML='<div class="post-head"><span class="post-avatar">'+(p.avatar?'<img src="'+p.avatar+'" alt="">':esc(p.authorName.charAt(0)))+'</span><div><b>'+esc(p.authorName)+(p.role?' • '+esc(p.role):"")+'</b><small>'+formatDate(p.createdAt)+' • '+status+'</small></div><button class="more user-post-menu" data-post-menu="'+p.id+'" data-own="'+own+'" aria-label="خيارات">•••</button></div><p>'+esc(p.text||"").replace(/\n/g,"<br>")+'</p>'+media+'<div class="post-actions"><button data-action="like" data-icon="heart">'+(p.likes||0)+'</button><button data-action="comments" data-icon="comment">'+(p.comments||0)+'</button><button data-action="share" data-icon="share">مشاركة</button><button data-action="save" data-icon="badge">حفظ</button></div><div class="comments-preview"><b>التعليقات</b><button class="comment-link" data-comments="'+p.id+'">عرض التعليقات والرد</button></div>';
   const s=art.querySelector('[data-action="save"]');if(s&&getSavedPostIds().includes(p.id)){s.classList.add("active");const label=s.querySelector(".icon-label");if(label)label.textContent="محفوظ"}
-  return art;
-}
+  return art;}
 function createPostView(editId){
   const posts=readPosts(), old=editId?posts.find(p=>p.id===editId):null,a=getAccount();
   if(editId&&!old)return;
@@ -212,7 +210,7 @@ function createPostView(editId){
     preview.querySelectorAll(".remove-post-image").forEach(btn=>btn.onclick=()=>{images.splice(Number(btn.dataset.index),1);renderDraftImages()});
   };
   renderDraftImages();
-  const compressPostImage=(file,max=900,quality=0.58)=>new Promise((resolve,reject)=>{
+  const compressPostImage=(file,max=1100,quality=0.78)=>new Promise((resolve,reject)=>{
     if(!file)return resolve("");
     const rd=new FileReader();
     rd.onload=()=>{
@@ -224,13 +222,13 @@ function createPostView(editId){
         const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
         const ctx=canvas.getContext("2d");
         if(!ctx){reject(new Error("canvas"));return}
-        ctx.drawImage(img,0,0,w,h);
+        ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.drawImage(img,0,0,w,h);
         let out=canvas.toDataURL("image/jpeg",quality);
         if(out.length>420000){
           const s=Math.min(1,700/Math.max(w,h)),c2=document.createElement("canvas");
           c2.width=Math.max(1,Math.round(w*s));c2.height=Math.max(1,Math.round(h*s));
           c2.getContext("2d").drawImage(canvas,0,0,c2.width,c2.height);
-          out=c2.toDataURL("image/jpeg",0.48);
+          out=c2.toDataURL("image/jpeg",0.62);
         }
         resolve(out);
       };
@@ -270,7 +268,7 @@ function createPostView(editId){
       }
       const finalPosts=[...posts,p];
       if(JSON.stringify(finalPosts).length>3900000)throw new Error("storage-budget");
-      savePosts(finalPosts);closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
+      savePosts(finalPosts);if(p.status==="published")pushSocialNotification(a.username,"publish","كشّاف","تم نشر منشورك بنجاح");closeModal();renderUserPosts();notify(p.status==="published"?"تم نشر المنشور":"تم إرسال المنشور للمراجعة");
     }catch(err){
       if(old){const idx=posts.findIndex(p=>p.id===old.id);if(idx>=0)posts[idx]=old}
       notify("تعذر حفظ المنشور. تم ضغط الصور تلقائيًا، حاول تقليل عدد الصور أو اختيار صور أصغر.");
@@ -287,7 +285,7 @@ function adminPostsView(){
   if(!getAccount().isAdmin){notify("هذه المساحة للمسؤول فقط");return}
   const all=readPosts();
   show('<h2>إدارة المنشورات</h2><p>مراجعة المنشورات والتحكم في ظهورها.</p><div class="admin-posts">'+(all.length?all.reverse().map(p=>'<div class="admin-post-item"><div><b>'+esc(p.authorName)+' • '+esc(p.role)+'</b><small>'+esc(p.text?.slice(0,90)||"منشور بصورة")+' • '+(p.status==="published"?"منشور":"قيد المراجعة")+(p.pinned?" • مثبت":"")+'</small></div><div class="admin-actions"><button data-admin="approve" data-id="'+p.id+'">نشر</button><button data-admin="hide" data-id="'+p.id+'">إخفاء</button><button data-admin="pin" data-id="'+p.id+'">'+(p.pinned?"إلغاء التثبيت":"تثبيت")+'</button><button class="danger-btn" data-admin="delete" data-id="'+p.id+'">حذف</button></div></div>').join(""):'<div class="empty-state">لا توجد منشورات للمراجعة.</div>')+'</div>');
-  $$(".admin-actions button").forEach(b=>b.onclick=()=>{const id=b.dataset.id,action=b.dataset.admin,p=readPosts(),i=p.findIndex(x=>x.id===id);if(i<0)return;if(action==="approve"){p[i].status="published"}if(action==="hide"){p[i].status="hidden"}if(action==="pin"){p[i].pinned=!p[i].pinned;p[i].status="published"}if(action==="delete"){p.splice(i,1)}savePosts(p);adminPostsView();renderUserPosts();notify("تم تحديث المنشور")});
+  $$(".admin-actions button").forEach(b=>b.onclick=()=>{const id=b.dataset.id,action=b.dataset.admin,p=readPosts(),i=p.findIndex(x=>x.id===id);if(i<0)return;if(action==="approve"){p[i].status="published";if(p[i].authorUsername)pushSocialNotification(p[i].authorUsername,"publish","كشّاف","تمت الموافقة على منشورك ونشره")}if(action==="hide"){p[i].status="hidden"}if(action==="pin"){p[i].pinned=!p[i].pinned;p[i].status="published"}if(action==="delete"){p.splice(i,1)}savePosts(p);adminPostsView();renderUserPosts();notify("تم تحديث المنشور")});
 }
 
 function getCommentThreads(){
@@ -297,8 +295,7 @@ function getCommentThreads(){
 }
 function renderCommentHub(){
   const box=$("#commentThreads");if(!box)return;
-  const threads=getCommentThreads();
-  box.innerHTML=threads.map(t=>'<button class="comment-thread" data-thread="'+t.id+'"><span class="thread-avatar">'+esc(t.author.charAt(0))+'</span><span class="thread-main"><b>'+esc(t.author)+' <small>'+esc(t.role||"")+'</small></b><p>'+esc(t.text.slice(0,105))+'</p><span>'+t.count+' تعليقات • '+esc(t.latest)+'</span></span><span class="thread-arrow">‹</span></button>').join("")||'<div class="empty-state">لا توجد نقاشات بعد.</div>';
+  const threads=getCommentThreads();  box.innerHTML=threads.map(t=>'<button class="comment-thread" data-thread="'+t.id+'"><span class="thread-avatar">'+esc(t.author.charAt(0))+'</span><span class="thread-main"><b>'+esc(t.author)+' <small>'+esc(t.role||"")+'</small></b><p>'+esc(t.text.slice(0,105))+'</p><span>'+t.count+' تعليقات • '+esc(t.latest)+'</span></span><span class="thread-arrow">‹</span></button>').join("")||'<div class="empty-state">لا توجد نقاشات بعد.</div>';
 }
 function getPostComments(postId){
   const demoComments=postId==="demo1"?
@@ -357,7 +354,7 @@ function commentComposerView(postId,commentId){
   show('<h2>'+(commentId?"الرد على التعليق":"إضافة تعليق")+'</h2><p>يمكنك إضافة نص أو صورة أو الاثنين معًا.</p><label class="field"><span>التعليق</span><textarea id="commentComposerText" rows="5" placeholder="اكتب تعليقك هنا..."></textarea></label><label class="post-image-upload"><input id="commentComposerFile" type="file" accept="image/*"><span>إضافة صورة</span><small id="commentComposerName">اختياري</small></label><img id="commentComposerPreview" class="post-photo draft-preview" style="display:none" alt=""><button class="wide-btn" id="commentComposerSend">'+(commentId?"إرسال الرد":"نشر التعليق")+'</button>');
   let image="";
   $("#commentComposerFile").onchange=e=>{const file=e.target.files[0];if(!file)return;const rd=new FileReader();rd.onload=()=>{image=rd.result;$("#commentComposerPreview").src=image;$("#commentComposerPreview").style.display="block";$("#commentComposerName").textContent=file.name};rd.readAsDataURL(file)};
-  $("#commentComposerSend").onclick=()=>{const text=$("#commentComposerText").value.trim();if(!text&&!image){notify("اكتب تعليقًا أو أضف صورة");return}const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");if(commentId){let cm=list.find(x=>x.id===commentId);if(!cm&&postId==="demo1"&&commentId==="c1"){cm={id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[]};list.push(cm)}if(!cm)return;cm.replies=cm.replies||[];cm.replies.push({name:a.name,role:a.role,text,image})}else{list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,image,time:"الآن",replies:[]});incrementPostComments(postId)}localStorage.setItem("comments_"+postId,JSON.stringify(list));closeModal();notify(commentId?"تم نشر الرد":"تم نشر التعليق");setTimeout(()=>commentsView(postId),100)};
+  $("#commentComposerSend").onclick=()=>{const text=$("#commentComposerText").value.trim();if(!text&&!image){notify("اكتب تعليقًا أو أضف صورة");return}const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");if(commentId){let cm=list.find(x=>x.id===commentId);if(!cm&&postId==="demo1"&&commentId==="c1"){cm={id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[]};list.push(cm)}if(!cm)return;cm.replies=cm.replies||[];cm.replies.push({name:a.name,username:a.username,role:a.role,text,image});if(cm.username&&cm.username!==a.username)pushSocialNotification(cm.username,"reply",a.name,"رد على تعليقك")}else{list.push({id:"c"+Date.now(),name:a.name,username:a.username,role:a.role,text,image,time:"الآن",replies:[]});incrementPostComments(postId);const target=readPosts().find(x=>x.id===postId);if(target&&target.authorUsername!==a.username)pushSocialNotification(target.authorUsername,"comment",a.name,"علق على منشورك")}localStorage.setItem("comments_"+postId,JSON.stringify(list));closeModal();notify(commentId?"تم نشر الرد":"تم نشر التعليق");setTimeout(()=>commentsView(postId),100)};
 }
 document.addEventListener("click",e=>{
   const image=e.target.closest(".post-photo,.comment-photo");if(image){e.preventDefault();openImageViewer(image.src);return}
@@ -378,8 +375,22 @@ syncAccount();renderUserPosts();renderCommentHub();
 const SOCIAL_PEOPLE=[{id:"p-mohamed",name:"محمد",username:"mohamed",role:"كشاف",bio:"مهتم بالمغامرات والتخييم والرحلات.",followers:128},{id:"p-sara",name:"سارة",username:"sara",role:"قائدة",bio:"أشارك تجارب التدريب والأنشطة الكشفية.",followers:342},{id:"p-yassine",name:"ياسين",username:"yassine",role:"كشاف",bio:"ملاحة، تصوير، وخدمة المجتمع.",followers:216},{id:"p-nour",name:"نور",username:"nour",role:"كشافة",bio:"أحب العمل الجماعي وحماية الطبيعة.",followers:189}];
 function socialStore(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f))}catch(e){return f}}function socialSave(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function getFollowing(){return socialStore("followingPeople",[])}function setFollowing(v){socialSave("followingPeople",v)}
+function getSocialNotifications(){
+  const a=getAccount(),key="socialNotifications_"+a.username;
+  let items=socialStore(key,null);if(!Array.isArray(items))items=socialStore("socialNotifications",[]);
+  return Array.isArray(items)?items:[];
+}
+function saveSocialNotifications(items){socialSave("socialNotifications_"+getAccount().username,items.slice(0,80))}
+function pushSocialNotification(targetUsername,type,name,text){
+  if(!targetUsername)return;
+  const key="socialNotifications_"+targetUsername;let items=socialStore(key,[]);if(!Array.isArray(items))items=[];
+  const icons={like:"heart",comment:"comment",reply:"comment",follow:"users",publish:"check"};
+  items.unshift({id:"n"+Date.now()+Math.random().toString(16).slice(2),type,name,text,time:"الآن",read:false,icon:icons[type]||"bell"});
+  socialSave(key,items.slice(0,80));
+}
+function notificationIcon(type){return ({like:"heart",comment:"comment",reply:"comment",follow:"users",publish:"check"})[type]||"bell"}
 function notificationsSocialView(){const items=socialStore("socialNotifications",[{id:"n1",type:"like",name:"سارة",text:"أعجبت بمنشورك",time:"منذ 5 دقائق",read:false},{id:"n2",type:"comment",name:"محمد",text:"رد على منشورك",time:"منذ 18 دقيقة",read:false},{id:"n3",type:"follow",name:"نور",text:"بدأت بمتابعتك",time:"منذ ساعة",read:true}]);show('<div class="social-modal-head"><div><span class="muted-label">مركز التنبيهات</span><h2>الإشعارات</h2></div><button class="small-btn" id="markSocialRead">تحديد الكل كمقروء</button></div><div class="social-notifications">'+items.map(n=>'<button class="social-notification '+(n.read?"read":"unread")+'"><span class="notif-icon" data-icon="'+(n.type==="like"?"heart":n.type==="comment"?"comment":"users")+'"></span><span><b>'+esc(n.name)+'</b> <small>'+esc(n.text)+'</small><time>'+esc(n.time)+'</time></span></button>').join("")+'</div>');$("#markSocialRead").onclick=()=>{items.forEach(x=>x.read=true);socialSave("socialNotifications",items);notificationsSocialView();notify("تم تحديد الإشعارات كمقروءة")}}
-function renderSuggestedPeople(){const box=$("#suggestedPeople");if(!box)return;const following=getFollowing();box.innerHTML=SOCIAL_PEOPLE.slice(0,3).map(p=>'<div class="suggest-person"><button class="suggest-avatar" data-profile="'+p.id+'">'+esc(p.name.charAt(0))+'</button><button class="suggest-main" data-profile="'+p.id+'"><b>'+esc(p.name)+'</b><small>'+esc(p.role)+' • '+p.followers+' متابع</small></button><button class="follow-btn '+(following.includes(p.id)?"following":"")+'" data-follow="'+p.id+'">'+(following.includes(p.id)?"متابَع":"متابعة")+'</button></div>').join("");$$("[data-follow]").forEach(b=>b.onclick=e=>{e.stopPropagation();const ids=getFollowing(),has=ids.includes(b.dataset.follow);setFollowing(has?ids.filter(x=>x!==b.dataset.follow):[...ids,b.dataset.follow]);renderSuggestedPeople();notify(has?"تم إلغاء المتابعة":"تمت المتابعة")});$$("[data-profile]").forEach(b=>b.onclick=()=>{const p=SOCIAL_PEOPLE.find(x=>x.id===b.dataset.profile);if(p)socialProfileView(p)})}
+function renderSuggestedPeople(){const box=$("#suggestedPeople");if(!box)return;const following=getFollowing();box.innerHTML=SOCIAL_PEOPLE.slice(0,3).map(p=>'<div class="suggest-person"><button class="suggest-avatar" data-profile="'+p.id+'">'+esc(p.name.charAt(0))+'</button><button class="suggest-main" data-profile="'+p.id+'"><b>'+esc(p.name)+'</b><small>'+esc(p.role)+' • '+p.followers+' متابع</small></button><button class="follow-btn '+(following.includes(p.id)?"following":"")+'" data-follow="'+p.id+'">'+(following.includes(p.id)?"متابَع":"متابعة")+'</button></div>').join("");$$("[data-follow]").forEach(b=>b.onclick=e=>{e.stopPropagation();const ids=getFollowing(),has=ids.includes(b.dataset.follow),person=personById(b.dataset.follow);setFollowing(has?ids.filter(x=>x!==b.dataset.follow):[...ids,b.dataset.follow]);if(!has&&person)pushSocialNotification(person.username,"follow",getAccount().name,"بدأ بمتابعتك");renderSuggestedPeople();notify(has?"تم إلغاء المتابعة":"تمت المتابعة")});$$("[data-profile]").forEach(b=>b.onclick=()=>{const p=SOCIAL_PEOPLE.find(x=>x.id===b.dataset.profile);if(p)socialProfileView(p)})}
 function renderTrending(){const box=$("#trendingTags");if(!box)return;const tags=["#رحلة_الجبل","#كشافة_الجزائر","#التخييم","#الإسعافات_الأولية","#خدمة_المجتمع"];box.innerHTML=tags.map((t,i)=>'<button class="trend-tag" data-tag="'+esc(t)+'"><b>'+t+'</b><small>'+(142-i*17)+' منشورًا</small></button>').join("")}
 function socialProfileView(p){const following=getFollowing().includes(p.id);show('<div class="social-profile"><div class="social-cover"></div><div class="social-profile-main"><span class="profile-avatar-xl">'+esc(p.name.charAt(0))+'</span><div class="social-profile-info"><h2>'+esc(p.name)+'</h2><p>@'+esc(p.username)+' • '+esc(p.role)+'</p><span>'+esc(p.bio)+'</span></div><button class="follow-btn big '+(following?"following":"")+'" id="profileFollow">'+(following?"متابَع":"متابعة")+'</button></div><div class="profile-stats"><div><b>'+p.followers+'</b><small>متابع</small></div><div><b>86</b><small>منشور</small></div><div><b>14</b><small>شارة</small></div></div><div class="profile-tabs"><button class="active">المنشورات</button><button>الصور</button><button>الإنجازات</button></div><div class="profile-preview-grid"><div></div><div></div><div></div></div></div>');$("#profileFollow").onclick=()=>{const a=getFollowing(),has=a.includes(p.id);setFollowing(has?a.filter(x=>x!==p.id):[...a,p.id]);socialProfileView(p);notify(has?"تم إلغاء المتابعة":"تمت المتابعة")}}
 function messagesView(){const chats=socialStore("socialChats",[{id:"c1",name:"سارة",role:"قائدة",last:"هل جهزت حقيبة الرحلة؟",time:"10:42"},{id:"c2",name:"محمد",role:"كشاف",last:"أراك غدًا في نقطة التجمع.",time:"09:18"},{id:"c3",name:"فوج الأمل",role:"فوج",last:"تم تحديث موعد النشاط.",time:"أمس"}]);show('<div class="chat-head"><div><span class="muted-label">التواصل</span><h2>الرسائل</h2></div><button class="small-btn" id="newChat">رسالة جديدة</button></div><div id="chatItems">'+chats.map(c=>'<button class="chat-item" data-chat="'+c.id+'"><span class="mini-avatar">'+esc(c.name.charAt(0))+'</span><span><b>'+esc(c.name)+'</b><small>'+esc(c.last)+'</small></span><time>'+esc(c.time)+'</time></button>').join("")+'</div>');$$(".chat-item").forEach(b=>b.onclick=()=>openChat(b.dataset.chat));$("#newChat").onclick=()=>{show('<h2>محادثة جديدة</h2><p>اختر شخصًا من مجتمعك.</p><div class="feature-catalog">'+SOCIAL_PEOPLE.map(p=>'<button class="catalog-item new-chat-person" data-person="'+p.id+'"><b>'+esc(p.name)+'</b><small>'+esc(p.role)+' • @'+esc(p.username)+'</small></button>').join("")+'</div>');$$(".new-chat-person").forEach(b=>b.onclick=()=>{const p=SOCIAL_PEOPLE.find(x=>x.id===b.dataset.person);openChat("new-"+p.id,p)})}}
@@ -397,8 +408,7 @@ $("#notificationsBtn").onclick=notificationsSocialView;$("#messagesBtn").onclick
 /* social expansion v2 */
 function getProfilePrivacy(username){
   return socialStore("profilePrivacy_"+username,{bio:true,photos:true,posts:true,badges:true,followers:true});
-}
-function setProfilePrivacy(username,v){socialSave("profilePrivacy_"+username,v)}
+}function setProfilePrivacy(username,v){socialSave("profilePrivacy_"+username,v)}
 function getPersonPosts(p){
   const ownPosts=readPosts().filter(x=>x.status==="published"&&(x.authorUsername===p.username||x.authorName===p.name));
   const samples={
@@ -423,7 +433,7 @@ function socialProfileView(p){
   const postsHtml=privacy.posts?posts.map(x=>'<article class="profile-post-mini"><div><b>'+esc(p.name)+'</b><small>'+formatDate(x.createdAt)+'</small></div><p>'+esc(x.text||"منشور بصورة").replace(/\n/g,"<br>")+'</p>'+(x.images?.length?'<div class="profile-mini-gallery">'+x.images.slice(0,3).map(im=>'<img src="'+esc(im)+'" alt="">').join("")+'</div>':"")+'</article>').join(""):'<div class="empty-state">صاحب الحساب أخفى منشوراته.</div>';
   const photosHtml=privacy.photos?(imagePosts.length?imagePosts.map(x=>(x.images||[x.image]).filter(Boolean).map(im=>'<img src="'+esc(im)+'" alt="صورة من منشورات '+esc(p.name)+'">').join("")).join(""):'<div class="empty-state">لا توجد صور منشورة.</div>'):'<div class="empty-state">الصور مخفية.</div>';
   show('<div class="social-profile"><div class="social-cover"></div><div class="social-profile-main"><span class="profile-avatar-xl">'+profileAvatar+'</span><div class="social-profile-info"><h2>'+esc(p.name)+'</h2><p>@'+esc(p.username)+' • '+esc(p.role||"عضو")+'</p>'+bio+'</div>'+(!isMe?'<button class="follow-btn big '+(following?"following":"")+'" id="profileFollow">'+(following?"متابَع":"متابعة")+'</button>':"")+'</div>'+controls+stats+'<div class="profile-tabs"><button class="active" data-profile-tab="posts">المنشورات</button><button data-profile-tab="photos">الصور</button><button data-profile-tab="badges">الإنجازات</button></div><div id="profileTabContent" class="profile-tab-content">'+postsHtml+'</div></div>');
-  if($("#profileFollow"))$("#profileFollow").onclick=()=>{const ids=getFollowing(),has=ids.includes(p.id);setFollowing(has?ids.filter(x=>x!==p.id):[...ids,p.id]);socialProfileView(p);notify(has?"تم إلغاء المتابعة":"تمت المتابعة")};
+  if($("#profileFollow"))$("#profileFollow").onclick=()=>{const ids=getFollowing(),has=ids.includes(p.id);setFollowing(has?ids.filter(x=>x!==p.id):[...ids,p.id]);if(!has)pushSocialNotification(p.username,"follow",getAccount().name,"بدأ بمتابعتك");socialProfileView(p);notify(has?"تم إلغاء المتابعة":"تمت المتابعة")};
   if($("#profilePrivacyBtn"))$("#profilePrivacyBtn").onclick=()=>profilePrivacyView(p);
   if($("#profileEditBtn"))$("#profileEditBtn").onclick=editProfileView;
   $$(".profile-tabs [data-profile-tab]").forEach(b=>b.onclick=()=>{ $$(".profile-tabs [data-profile-tab]").forEach(x=>x.classList.toggle("active",x===b)); const c=$("#profileTabContent"); if(!c)return; if(b.dataset.profileTab==="posts")c.innerHTML=postsHtml; else if(b.dataset.profileTab==="photos")c.innerHTML=photosHtml; else c.innerHTML=privacy.badges?'<div class="profile-badges"><div>★ سيد الملاحة</div><div>✓ الإسعافات الأولية</div><div>◆ حامي البيئة</div></div>':'<div class="empty-state">الإنجازات مخفية.</div>'; });
@@ -492,13 +502,12 @@ function commentsView(postId){
   const comments=getPostComments(postId);
   show('<div class="comments-head"><div><h2>التعليقات</h2><p>'+comments.length+' تعليق • الردود مرتبة أسفل كل تعليق.</p></div><button class="small-btn" id="closeCommentsModal">إغلاق</button></div><div class="comments-list">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">كن أول من يشارك رأيه.</div>')+'</div><div class="comment-composer"><input id="commentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="sendComment">إرسال</button></div>');
   $("#closeCommentsModal").onclick=closeModal;
-  $("#sendComment").onclick=()=>{const text=$("#commentInput").value.trim();if(!text)return;const a=getAccount(),list=getPostComments(postId).filter(c=>!(postId==="demo1"&&c.id==="c1"));list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);commentsView(postId);notify("تم نشر التعليق")};
+  $("#sendComment").onclick=()=>{const text=$("#commentInput").value.trim();if(!text)return;const a=getAccount(),list=getPostComments(postId).filter(c=>!(postId==="demo1"&&c.id==="c1"));list.push({id:"c"+Date.now(),name:a.name,username:a.username,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);const target=readPosts().find(x=>x.id===postId);if(target&&target.authorUsername!==a.username)pushSocialNotification(target.authorUsername,"comment",a.name,"علق على منشورك");commentsView(postId);notify("تم نشر التعليق")};
   $$(".reply-comment").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();commentComposerView(postId,b.dataset.commentId)});
   $$(".like-comment").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();const key="likedComment_"+postId+"_"+b.dataset.commentId,active=!b.classList.contains("active");b.classList.toggle("active",active);b.textContent=active?"♥ أعجبني":"♡ إعجاب";localStorage.setItem(key,active?"1":"0")});
 }
 function renderUserPosts(){
-  const wrap=$("#feed .posts");if(!wrap)return;
-  $$(".user-post").forEach(e=>e.remove());
+  const wrap=$("#feed .posts");if(!wrap)return;  $$(".user-post").forEach(e=>e.remove());
   const hidden=new Set(socialStore("hiddenPosts",[]));
   const posts=readPosts().filter(p=>(p.status==="published"||p.authorUsername===getAccount().username)&&!hidden.has(p.id));
   posts.reverse().forEach(p=>wrap.prepend(postElement(p)));
@@ -529,11 +538,13 @@ function personById(id){return SOCIAL_PEOPLE.find(p=>p.id===id)}
 function compressAvatar(file){
   return new Promise((resolve,reject)=>{
     const rd=new FileReader();rd.onload=()=>{
-      const img=new Image();img.onload=()=>{
-        const max=420,scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));
-        const c=document.createElement("canvas");c.width=Math.max(1,Math.round((img.naturalWidth||img.width)*scale));c.height=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
-        c.getContext("2d").drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL("image/jpeg",.78));
-      };img.onerror=()=>resolve(rd.result);img.src=rd.result;
+      const src=rd.result,img=new Image();img.onload=()=>{
+        const naturalMax=Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height),max=180,scale=Math.min(1,max/naturalMax);
+        const w=Math.max(1,Math.round((img.naturalWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
+        const c=document.createElement("canvas");c.width=w;c.height=h;const ctx=c.getContext("2d");
+        if(!ctx){resolve(src);return}
+        ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL("image/jpeg",.68));
+      };img.onerror=()=>resolve(src);img.src=src;
     };rd.onerror=reject;rd.readAsDataURL(file);
   });
 }
@@ -597,8 +608,7 @@ function editProfileView(){
   show('<h2>تعديل الملف الشخصي</h2><p>الصورة يتم ضغطها تلقائيًا حتى تحفظ بشكل موثوق في المتصفح.</p><label class="avatar-upload"><input id="avatarFile" type="file" accept="image/*"><span class="account-avatar-lg" id="editAvatarPreview">'+(a.avatar?'<img src="'+esc(a.avatar)+'" alt="">':esc(a.name.charAt(0)))+'</span><b>إضافة أو تغيير الصورة الشخصية</b><small>JPG أو PNG • حجم محسن للحفظ</small></label><div class="feature-catalog"><label class="field"><span>الاسم</span><input id="accountNameInput" value="'+esc(a.name)+'"></label><label class="field"><span>اسم المستخدم</span><input id="accountUsernameInput" value="'+esc(a.username)+'"></label><label class="field"><span>النبذة</span><textarea id="accountBioInput" rows="3">'+esc(localStorage.getItem("accountBio")||"")+'</textarea></label></div><button class="wide-btn" id="saveProfile">حفظ الملف الشخصي</button>');
   let avatar=a.avatar;
   $("#avatarFile").onchange=e=>{const file=e.target.files[0];if(!file)return;compressAvatar(file).then(v=>{avatar=v;$("#editAvatarPreview").innerHTML='<img src="'+esc(v)+'" alt="">';notify("تم ضغط الصورة وتجهيزها للحفظ")}).catch(()=>notify("تعذر قراءة الصورة"))};
-  $("#saveProfile").onclick=()=>{try{localStorage.setItem("accountName",$("#accountNameInput").value.trim()||"أحمد");localStorage.setItem("accountUsername",$("#accountUsernameInput").value.trim().replace(/^@/,"")||"ahmed");localStorage.setItem("accountBio",$("#accountBioInput").value.trim());if(avatar)localStorage.setItem("accountAvatar",avatar);syncAccount();closeModal();renderUserPosts();renderStories();notify("تم حفظ الملف الشخصي")}catch(e){notify("تعذر حفظ الصورة. جرّب صورة أصغر.")}};
-}
+  $("#saveProfile").onclick=()=>{try{localStorage.setItem("accountName",$("#accountNameInput").value.trim()||"أحمد");localStorage.setItem("accountUsername",$("#accountUsernameInput").value.trim().replace(/^@/,"")||"ahmed");localStorage.setItem("accountBio",$("#accountBioInput").value.trim());if(avatar)localStorage.setItem("accountAvatar",avatar);syncAccount();closeModal();renderUserPosts();renderStories();notify("تم حفظ الملف الشخصي")}catch(e){notify("تعذر حفظ الصورة. جرّب صورة أصغر.")}};}
 /* reliable profile entry points */
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-profile]");
@@ -613,3 +623,4 @@ document.addEventListener("click",e=>{
     if(p){e.preventDefault();e.stopPropagation();socialProfileView(p);return}
   }
 });
+document.addEventListener("click",e=>{const b=e.target.closest("#feedMessagesBtn");if(b){e.preventDefault();messagesView()}});
