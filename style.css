@@ -135,3 +135,8 @@ button,.quick-links button,.post,.side-panel,.activity-list article,.group-page,
   .saved-post-item .remove-saved{grid-column:2;grid-row:1}
   .saved-post-item .open-saved{grid-column:2;grid-row:2}
 }
+
+
+/* image viewer and media actions */
+.image-viewer{display:grid;gap:12px}.image-viewer-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.image-viewer-stage{background:#0b1220;border-radius:15px;min-height:220px;max-height:68vh;display:grid;place-items:center;overflow:auto;padding:8px}.image-viewer-stage img{display:block;max-width:100%;max-height:64vh;width:auto;height:auto;object-fit:contain;border-radius:10px;cursor:zoom-out}.image-download{display:block;text-align:center;text-decoration:none}.post-gallery .post-photo,.comment-photo{cursor:zoom-in}.post-actions button[data-action=save].active{font-weight:800}.post-actions button[data-action=save].active .ui-icon{fill:currentColor}
+@media(max-width:470px){.modal{padding:10px}.modal-box{padding:17px;max-height:92vh}.image-viewer-stage{min-height:180px;max-height:72vh}.image-viewer-stage img{max-height:70vh}}
