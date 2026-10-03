@@ -158,8 +158,8 @@ function savedPostsView(){
 }
 function accountView(){
   const a=getAccount();
-  show('<div class="account-head"><div class="account-avatar-lg" id="accountAvatarPreview">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc((a.name||"أ").charAt(0)))+'</div><div><h2>حسابي</h2><p>@'+esc(a.username)+' • '+esc(a.role)+' • مستوى '+esc(a.level)+'</p></div></div><div class="feature-catalog account-menu"><button class="catalog-item" id="editProfileBtn"><b>الملف الشخصي</b><small>الصورة، الاسم واسم المستخدم</small></button><button class="catalog-item" id="myPostsBtn"><b>منشوراتي</b><small>تعديل وحذف المنشورات التي أنشأتها</small></button><button class="catalog-item" id="savedPostsBtn"><b>المنشورات المحفوظة</b><small>المنشورات التي حفظتها</small></button><button class="catalog-item" id="publishingBtn"><b>إعدادات النشر</b><small>موافقة الإدارة أو النشر التلقائي</small></button>'+(a.isAdmin?'<button class="catalog-item admin-card" id="adminBtn"><b>لوحة إدارة المنشورات</b><small>مراجعة، إخفاء، تثبيت وحذف</small></button>':'')+'<button class="catalog-item" id="accountSettings2"><b>الإعدادات العامة</b><small>الإشعارات والخصوصية</small></button></div>');
-  $("#editProfileBtn").onclick=editProfileView;$("#myPostsBtn").onclick=myPostsView;$("#savedPostsBtn").onclick=savedPostsView;$("#publishingBtn").onclick=publishingView;
+  show('<div class="account-head"><div class="account-avatar-lg" id="accountAvatarPreview">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc((a.name||"أ").charAt(0)))+'</div><div><h2>حسابي</h2><p>@'+esc(a.username)+' • '+esc(a.role)+' • مستوى '+esc(a.level)+'</p></div></div><div class="feature-catalog account-menu"><button class="catalog-item" id="editProfileBtn"><b>الملف الشخصي</b><small>الصورة، الاسم واسم المستخدم</small></button><button class="catalog-item" id="myPostsBtn"><b>منشوراتي</b><small>تعديل وحذف المنشورات التي أنشأتها</small></button><button class="catalog-item" id="savedPostsBtn"><b>المنشورات المحفوظة</b><small>المنشورات التي حفظتها</small></button><button class="catalog-item" id="publishingBtn" style="display:none"><b>إعدادات النشر</b><small>تحت إدارة المسؤول</small></button>'+(a.isAdmin?'<button class="catalog-item admin-card" id="adminBtn"><b>لوحة إدارة المنشورات</b><small>مراجعة، إخفاء، تثبيت وحذف</small></button>':'')+'<button class="catalog-item" id="accountSettings2"><b>الإعدادات العامة</b><small>الإشعارات والخصوصية</small></button></div>');
+  $("#editProfileBtn").onclick=editProfileView;$("#myPostsBtn").onclick=myPostsView;$("#savedPostsBtn").onclick=savedPostsView;if($("#publishingBtn"))$("#publishingBtn").onclick=()=>notify("إعدادات النشر متاحة للإدارة فقط");
   if($("#adminBtn"))$("#adminBtn").onclick=adminPostsView;$("#accountSettings2").onclick=settingsView;
 }
 function editProfileView(){
@@ -172,6 +172,7 @@ function editProfileView(){
 }
 function publishingView(){
   const a=getAccount();
+  if(!a.isAdmin){notify("إعدادات النشر متاحة للإدارة فقط");return}
   show('<h2>إعدادات النشر</h2><p>اختر كيف يتعامل الفوج مع المنشورات الجديدة.</p><div class="publish-modes"><label class="publish-mode"><input type="radio" name="pubMode" value="review"><span><b>مراجعة قبل النشر</b><small>المنشور يبقى قيد المراجعة حتى توافق الإدارة أو المسؤول.</small></span></label><label class="publish-mode"><input type="radio" name="pubMode" value="auto"><span><b>النشر التلقائي</b><small>يظهر المنشور مباشرة للأعضاء.</small></span></label></div><button class="wide-btn" id="savePublishMode">حفظ الإعداد</button>');
   document.querySelector('input[name="pubMode"][value="'+a.autoPublish+'"]').checked=true;
   $("#savePublishMode").onclick=()=>{localStorage.setItem("publishMode",document.querySelector('input[name="pubMode"]:checked').value);closeModal();notify("تم حفظ إعدادات النشر")};
@@ -240,7 +241,7 @@ function createPostView(editId){
   };
   $("#savePostBtn").onclick=()=>{
     const text=$("#postText").value.trim();if(!text&&!images.length){notify("اكتب نصًا أو أضف صورة");return}
-    const mode=a.isAdmin?"auto":(localStorage.getItem("publishMode")||"review");
+    const mode=a.isAdmin?"auto":"review";
     try{
       if(old){
         old.text=text;old.images=images;old.image=images[0]||"";savePosts(posts);closeModal();renderUserPosts();notify("تم تعديل المنشور");return
@@ -313,6 +314,7 @@ function openImageViewer(src){
   $("#downloadImage").onclick=()=>setTimeout(()=>notify("تم تجهيز حفظ الصورة"),80);
 }
 function commentsView(postId){
+  box.dataset.postId=postId;
   const demo=postId==="demo1"?[{id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[{name:"فوج الأمل",role:"قائد",text:"بانتظاركم في الموعد."}]}]:[];
   let stored=[];try{stored=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");if(!Array.isArray(stored))stored=[]}catch(e){stored=[]}
   const comments=[...demo,...stored.filter(sc=>!demo.some(dc=>dc.id===sc.id))];
@@ -336,7 +338,6 @@ function commentComposerView(postId,commentId){
   $("#commentComposerSend").onclick=()=>{const text=$("#commentComposerText").value.trim();if(!text&&!image){notify("اكتب تعليقًا أو أضف صورة");return}const a=getAccount(),list=JSON.parse(localStorage.getItem("comments_"+postId)||"[]");if(commentId){let cm=list.find(x=>x.id===commentId);if(!cm&&postId==="demo1"&&commentId==="c1"){cm={id:"c1",name:"محمد",role:"كشاف",text:"بالتوفيق للجميع، سأكون حاضرًا.",time:"منذ 12 دقيقة",replies:[]};list.push(cm)}if(!cm)return;cm.replies=cm.replies||[];cm.replies.push({name:a.name,role:a.role,text,image})}else{list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,image,time:"الآن",replies:[]});incrementPostComments(postId)}localStorage.setItem("comments_"+postId,JSON.stringify(list));closeModal();notify(commentId?"تم نشر الرد":"تم نشر التعليق");openCommunity();setTimeout(()=>openCommentsPage(postId),30)};
 }
 document.addEventListener("click",e=>{
-  const reply=e.target.closest(".reply-comment");if(reply){e.preventDefault();e.stopPropagation();const post=reply.closest(".comments-list,.thread-messages");const postId=post?.closest(".modal-box")?.dataset?.postId||reply.closest("[data-post-id]")?.dataset.postId;if(postId){commentComposerView(postId,reply.dataset.commentId);return}const section=$("#comments");if(section?.classList.contains("comments-open")){return}}
   const image=e.target.closest(".post-photo,.comment-photo");if(image){e.preventDefault();openImageViewer(image.src);return}
   const thread=e.target.closest(".comment-thread");if(thread){commentsView(thread.dataset.thread);return}
   const refresh=e.target.closest("#refreshComments");if(refresh){renderCommentHub();notify("تم تحديث النقاشات");return}
