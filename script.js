@@ -500,3 +500,96 @@ document.addEventListener("click",e=>{
   const profile=e.target.closest(".post-head b");
   if(profile){const post=profile.closest(".post"),name=profile.textContent.split(" • ")[0].trim(),p=SOCIAL_PEOPLE.find(x=>x.name===name);if(p){socialProfileView(p);return}}
 });
+
+/* social v3: profiles, blocking, smoother stories, persistent avatar */
+function getBlockedPeople(){return socialStore("blockedPeople",[])}
+function setBlockedPeople(v){socialSave("blockedPeople",[...new Set(v)])}
+function isBlocked(id){return getBlockedPeople().includes(id)}
+function personById(id){return SOCIAL_PEOPLE.find(p=>p.id===id)}
+function compressAvatar(file){
+  return new Promise((resolve,reject)=>{
+    const rd=new FileReader();rd.onload=()=>{
+      const img=new Image();img.onload=()=>{
+        const max=420,scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,img.naturalHeight||img.height));
+        const c=document.createElement("canvas");c.width=Math.max(1,Math.round((img.naturalWidth||img.width)*scale));c.height=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL("image/jpeg",.78));
+      };img.onerror=()=>resolve(rd.result);img.src=rd.result;
+    };rd.onerror=reject;rd.readAsDataURL(file);
+  });
+}
+function renderProfileAction(p){
+  const blocked=isBlocked(p.id), following=getFollowing().includes(p.id);
+  return '<div class="profile-action-row"><button class="follow-btn big '+(following?"following":"")+'" id="profileFollow">'+(following?"متابَع":"متابعة")+'</button><button class="small-btn '+(blocked?"blocked":"")+'" id="profileBlock">'+(blocked?"إلغاء الحظر":"حظر")+'</button><button class="small-btn" id="profileMessage">رسالة</button></div>';
+}
+function socialProfileView(p){
+  const a=getAccount(), isMe=p.id==="me"||p.username===a.username;
+  if(!isMe && isBlocked(p.id)){show('<div class="blocked-profile"><div class="blocked-icon">×</div><h2>هذا الحساب محظور</h2><p>لن تظهر منشورات هذا الشخص أو معلوماته لك ما دام الحظر مفعّلًا.</p><button class="wide-btn" id="unblockProfile">إلغاء الحظر</button></div>');$("#unblockProfile").onclick=()=>{setBlockedPeople(getBlockedPeople().filter(x=>x!==p.id));socialProfileView(p);renderUserPosts();renderStories();};return}
+  const privacy=getProfilePrivacy(p.username),following=getFollowing().includes(p.id),posts=getPersonPosts(p).filter(x=>!isBlocked(p.id));
+  const imagePosts=posts.filter(x=>(x.images&&x.images.length)||(x.image)),avatar=p.avatar||"";
+  const profileAvatar=avatar?'<img src="'+esc(avatar)+'" alt="">':esc((p.name||"أ").charAt(0));
+  const controls=isMe?'<div class="profile-control-row"><button class="small-btn" id="profilePrivacyBtn">إعدادات الخصوصية</button><button class="small-btn" id="profileEditBtn">تعديل الملف</button></div>':renderProfileAction(p);
+  const bio=privacy.bio?'<p class="profile-bio">'+esc(p.bio||"لا توجد نبذة بعد.")+'</p>':'<p class="profile-locked-note">النبذة مخفية.</p>';
+  const stats='<div class="profile-stats"><div><b>'+ (privacy.followers?(p.followers||0):"—") +'</b><small>متابع</small></div><div><b>'+ (privacy.posts?posts.length:"—") +'</b><small>منشور</small></div><div><b>'+ (privacy.badges?"14":"—") +'</b><small>شارات</small></div></div>';
+  const postsHtml=privacy.posts?posts.map(x=>'<article class="profile-post-mini"><div><b>'+esc(p.name)+'</b><small>'+formatDate(x.createdAt)+'</small></div><p>'+esc(x.text||"منشور بصورة").replace(/\n/g,"<br>")+'</p>'+(x.images?.length?'<div class="profile-mini-gallery">'+x.images.slice(0,3).map(im=>'<img src="'+esc(im)+'" alt="">').join("")+'</div>':"")+'</article>').join(""):'<div class="empty-state">صاحب الحساب أخفى منشوراته.</div>';
+  const photosHtml=privacy.photos?(imagePosts.length?'<div class="profile-photo-grid">'+imagePosts.flatMap(x=>(x.images||[x.image]).filter(Boolean)).map(im=>'<img src="'+esc(im)+'" alt="صورة من '+esc(p.name)+'">').join("")+'</div>':'<div class="empty-state">لا توجد صور منشورة.</div>'):'<div class="empty-state">الصور مخفية.</div>';
+  show('<div class="social-profile"><div class="social-cover"></div><div class="social-profile-main"><span class="profile-avatar-xl">'+profileAvatar+'</span><div class="social-profile-info"><h2>'+esc(p.name)+'</h2><p>@'+esc(p.username)+' • '+esc(p.role||"عضو")+'</p>'+bio+'</div></div>'+controls+stats+'<div class="profile-tabs"><button class="active" data-profile-tab="posts">المنشورات</button><button data-profile-tab="photos">الصور</button><button data-profile-tab="badges">الإنجازات</button></div><div id="profileTabContent" class="profile-tab-content">'+postsHtml+'</div></div>');
+  if($("#profileFollow"))$("#profileFollow").onclick=()=>{const ids=getFollowing(),has=ids.includes(p.id);setFollowing(has?ids.filter(x=>x!==p.id):[...ids,p.id]);socialProfileView(p);notify(has?"تم إلغاء المتابعة":"تمت المتابعة")};
+  if($("#profileBlock"))$("#profileBlock").onclick=()=>{const b=isBlocked(p.id);setBlockedPeople(b?getBlockedPeople().filter(x=>x!==p.id):[...getBlockedPeople(),p.id]);closeModal();renderUserPosts();renderStories();notify(b?"تم إلغاء الحظر":"تم حظر الحساب")};
+  if($("#profileMessage"))$("#profileMessage").onclick=()=>openChat("person_"+p.id,p);
+  if($("#profilePrivacyBtn"))$("#profilePrivacyBtn").onclick=()=>profilePrivacyView(p);
+  if($("#profileEditBtn"))$("#profileEditBtn").onclick=editProfileView;
+  $$(".profile-tabs [data-profile-tab]").forEach(b=>b.onclick=()=>{$$(".profile-tabs [data-profile-tab]").forEach(x=>x.classList.toggle("active",x===b));const c=$("#profileTabContent");if(!c)return;if(b.dataset.profileTab==="posts")c.innerHTML=postsHtml;else if(b.dataset.profileTab==="photos")c.innerHTML=photosHtml;else c.innerHTML=privacy.badges?'<div class="profile-badges"><div>★ سيد الملاحة</div><div>✓ الإسعافات الأولية</div><div>◆ حامي البيئة</div></div>':'<div class="empty-state">الإنجازات مخفية.</div>'});
+}
+function renderStories(){
+  const box=$("#storiesStrip");if(!box)return;
+  const blocked=new Set(getBlockedPeople());
+  const stories=socialStore("socialStories",[
+    {id:"s1",name:"سارة",username:"sara",text:"تجهيزات رحلة الغد",time:"20د",createdAt:Date.now()-1200000},
+    {id:"s2",name:"محمد",username:"mohamed",text:"من التدريب اليوم",time:"1س",createdAt:Date.now()-3600000},
+    {id:"s3",name:"نور",username:"nour",text:"حملة التشجير",time:"2س",createdAt:Date.now()-7200000}
+  ]).filter(s=>!s.personId||!blocked.has(s.personId)&&!blocked.has(SOCIAL_PEOPLE.find(p=>p.username===s.username)?.id));
+  box.innerHTML='<button class="story-card own" id="storyAdd"><span class="story-ring">+</span><b>قصتك</b><small>أضف تحديثًا</small></button>'+stories.slice(0,12).map(s=>'<button class="story-card" data-story-open="'+s.id+'"><span class="story-ring">'+esc((s.name||"أ").charAt(0))+'</span><b>'+esc(s.name)+'</b><small>'+esc(s.time||"الآن")+'</small></button>').join("");
+  $("#storyAdd").onclick=()=>storyComposerView();
+  $$("#storiesStrip [data-story-open]").forEach(b=>b.onclick=()=>storyReaderView(stories,b.dataset.storyOpen));
+}
+function storyComposerView(){
+  show('<div class="story-composer"><div class="social-modal-head"><div><span class="muted-label">مشاركة</span><h2>إضافة قصة</h2></div><button class="small-btn" id="storyCancel">إلغاء</button></div><label class="story-upload"><input id="storyImageFile" type="file" accept="image/*"><span>إضافة صورة للقصة</span><small>اختياري</small></label><label class="field"><span>النص</span><textarea id="storyText" rows="4" placeholder="ماذا تريد أن تشارك؟"></textarea></label><button class="wide-btn" id="publishStory">نشر القصة</button></div>');
+  let image="";
+  $("#storyCancel").onclick=storiesView;
+  $("#storyImageFile").onchange=e=>{const f=e.target.files[0];if(f)compressAvatar(f).then(x=>{image=x;notify("تم تجهيز صورة القصة")})};
+  $("#publishStory").onclick=()=>{const text=$("#storyText").value.trim();if(!text&&!image){notify("أضف نصًا أو صورة");return}const a=getAccount(),arr=socialStore("socialStories",[]);arr.unshift({id:"story"+Date.now(),name:a.name,username:a.username,text:text||"صورة جديدة",image,time:"الآن",createdAt:Date.now(),personId:"me"});socialSave("socialStories",arr);renderStories();storiesView();notify("تم نشر قصتك")};
+}
+function storyReaderView(stories,id){
+  let i=Math.max(0,stories.findIndex(x=>x.id===id));if(i<0)i=0;
+  const draw=()=>{const s=stories[i],avatar=s.image?'<img class="story-reader-image" src="'+esc(s.image)+'" alt="">':'<span class="story-reader-avatar">'+esc((s.name||"أ").charAt(0))+'</span>';show('<div class="story-reader"><div class="story-progress">'+stories.map((_,n)=>'<i class="'+(n<=i?"seen":"")+'"></i>').join("")+'</div><div class="story-reader-top"><b>'+esc(s.name)+'</b><div><button class="small-btn" id="storyPrev">‹</button><button class="small-btn" id="storyNext">›</button><button class="small-btn" id="storyClose">إغلاق</button></div></div><div class="story-reader-body">'+avatar+'<h2>'+esc(s.text||"")+'</h2><p>'+esc(s.time||"الآن")+'</p></div></div>');$("#storyClose").onclick=storiesView;$("#storyPrev").onclick=()=>{if(i>0){i--;draw()}};$("#storyNext").onclick=()=>{if(i<stories.length-1){i++;draw()}}};
+  draw();
+}
+function storiesView(){const stories=socialStore("socialStories",[]);show('<div class="social-modal-head"><div><span class="muted-label">قصص المجتمع</span><h2>القصص</h2></div><button class="small-btn" id="addStory">قصتي</button></div><div class="story-view-grid">'+stories.slice(0,12).map(s=>'<button class="story-view-card" data-story="'+s.id+'"><span>'+esc((s.name||"أ").charAt(0))+'</span><b>'+esc(s.name)+'</b><small>'+esc(s.text||"صورة")+'</small><time>'+esc(s.time||"الآن")+'</time></button>').join("")+'</div>');$("#addStory").onclick=storyComposerView;$$("[data-story]").forEach(b=>b.onclick=()=>storyReaderView(stories,b.dataset.story))}
+function renderUserPosts(){
+  const wrap=$("#feed .posts");if(!wrap)return;
+  $$(".user-post").forEach(e=>e.remove());
+  const hidden=new Set(socialStore("hiddenPosts",[])),blocked=new Set(getBlockedPeople());
+  const posts=readPosts().filter(p=>(p.status==="published"||p.authorUsername===getAccount().username)&&!hidden.has(p.id)&&!blocked.has(SOCIAL_PEOPLE.find(x=>x.username===p.authorUsername)?.id));
+  posts.reverse().forEach(p=>wrap.prepend(postElement(p)));mountIcons();
+}
+function editProfileView(){
+  const a=getAccount();
+  show('<h2>تعديل الملف الشخصي</h2><p>الصورة يتم ضغطها تلقائيًا حتى تحفظ بشكل موثوق في المتصفح.</p><label class="avatar-upload"><input id="avatarFile" type="file" accept="image/*"><span class="account-avatar-lg" id="editAvatarPreview">'+(a.avatar?'<img src="'+esc(a.avatar)+'" alt="">':esc(a.name.charAt(0)))+'</span><b>إضافة أو تغيير الصورة الشخصية</b><small>JPG أو PNG • حجم محسن للحفظ</small></label><div class="feature-catalog"><label class="field"><span>الاسم</span><input id="accountNameInput" value="'+esc(a.name)+'"></label><label class="field"><span>اسم المستخدم</span><input id="accountUsernameInput" value="'+esc(a.username)+'"></label><label class="field"><span>النبذة</span><textarea id="accountBioInput" rows="3">'+esc(localStorage.getItem("accountBio")||"")+'</textarea></label></div><button class="wide-btn" id="saveProfile">حفظ الملف الشخصي</button>');
+  let avatar=a.avatar;
+  $("#avatarFile").onchange=e=>{const file=e.target.files[0];if(!file)return;compressAvatar(file).then(v=>{avatar=v;$("#editAvatarPreview").innerHTML='<img src="'+esc(v)+'" alt="">';notify("تم ضغط الصورة وتجهيزها للحفظ")}).catch(()=>notify("تعذر قراءة الصورة"))};
+  $("#saveProfile").onclick=()=>{try{localStorage.setItem("accountName",$("#accountNameInput").value.trim()||"أحمد");localStorage.setItem("accountUsername",$("#accountUsernameInput").value.trim().replace(/^@/,"")||"ahmed");localStorage.setItem("accountBio",$("#accountBioInput").value.trim());if(avatar)localStorage.setItem("accountAvatar",avatar);syncAccount();closeModal();renderUserPosts();renderStories();notify("تم حفظ الملف الشخصي")}catch(e){notify("تعذر حفظ الصورة. جرّب صورة أصغر.")}};
+}
+/* reliable profile entry points */
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-profile]");
+  if(el){
+    const p=personById(el.dataset.profile);
+    if(p){e.preventDefault();e.stopPropagation();socialProfileView(p);return}
+  }
+  const head=e.target.closest(".post-head");
+  if(head && !e.target.closest(".user-post-menu")){
+    const post=head.closest(".post"), name=(head.querySelector("b")?.textContent||"").split(" • ")[0].trim();
+    const p=SOCIAL_PEOPLE.find(x=>x.name===name);
+    if(p){e.preventDefault();e.stopPropagation();socialProfileView(p);return}
+  }
+});
