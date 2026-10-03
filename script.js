@@ -372,3 +372,131 @@ function socialSearchView(initial){show('<span class="muted-label">استكشا�
 function postMenuView(postId){const own=postId.startsWith("p");show('<h2>خيارات المنشور</h2><div class="feature-catalog">'+(own?'<button class="catalog-item" id="menuEdit"><b>تعديل المنشور</b><small>تعديل النص والصور</small></button><button class="catalog-item danger-item" id="menuDelete"><b>حذف المنشور</b><small>إزالة المنشور من حسابك</small></button>':'<button class="catalog-item" id="menuReport"><b>الإبلاغ عن المنشور</b><small>إرسال البلاغ للمراجعة</small></button><button class="catalog-item" id="menuNotInterested"><b>لست مهتمًا</b><small>تقليل ظهور محتوى مشابه</small></button>')+'<button class="catalog-item" id="menuCopy"><b>نسخ رابط المنشور</b><small>مشاركة الرابط مع الآخرين</small></button></div>');if($("#menuEdit"))$("#menuEdit").onclick=()=>createPostView(postId);if($("#menuDelete"))$("#menuDelete").onclick=()=>{savePosts(readPosts().filter(x=>x.id!==postId));closeModal();renderUserPosts();notify("تم حذف المنشور")};if($("#menuReport"))$("#menuReport").onclick=()=>{closeModal();notify("تم إرسال البلاغ للمراجعة")};if($("#menuNotInterested"))$("#menuNotInterested").onclick=()=>{closeModal();notify("سيتم تقليل هذا النوع من المنشورات")};if($("#menuCopy"))$("#menuCopy").onclick=()=>{if(navigator.clipboard)navigator.clipboard.writeText(location.href.split("#")[0]+"#post-"+postId);closeModal();notify("تم نسخ رابط المنشور")}}
 document.addEventListener("click",e=>{const react=e.target.closest('[data-action="react"]');if(react){const id=react.closest(".post")?.dataset.postId;if(id)reactionsView(id);return}const more=e.target.closest(".post .more");if(more){const id=more.closest(".post")?.dataset.postId;if(id)postMenuView(id);return}const filter=e.target.closest("[data-feed-filter]");if(filter){setFeedFilter(filter.dataset.feedFilter);return}const trend=e.target.closest("[data-tag]");if(trend){socialSearchView(trend.dataset.tag);return}});
 $("#notificationsBtn").onclick=notificationsSocialView;$("#messagesBtn").onclick=messagesView;$("#searchBtn").onclick=()=>socialSearchView("");$$(".social-tabs [data-feed-filter]").forEach(b=>b.onclick=()=>setFeedFilter(b.dataset.feedFilter));renderStories();renderSuggestedPeople();renderTrending();
+
+
+/* social expansion v2 */
+function getProfilePrivacy(username){
+  return socialStore("profilePrivacy_"+username,{bio:true,photos:true,posts:true,badges:true,followers:true});
+}
+function setProfilePrivacy(username,v){socialSave("profilePrivacy_"+username,v)}
+function getPersonPosts(p){
+  const ownPosts=readPosts().filter(x=>x.status==="published"&&(x.authorUsername===p.username||x.authorName===p.name));
+  const samples={
+    mohamed:[{id:"sp-m1",text:"تجربة جديدة في الملاحة اليوم. البوصلة والخريطة تصنعان الفرق!",images:[],createdAt:Date.now()-3600000}],
+    sara:[{id:"sp-s1",text:"تذكير: تدريب الإسعافات الأولية هذا الأسبوع.",images:[],createdAt:Date.now()-7200000}],
+    yassine:[{id:"sp-y1",text:"لقطة من تدريب الملاحة في الطبيعة.",images:[],createdAt:Date.now()-10800000}],
+    nour:[{id:"sp-n1",text:"معًا نحافظ على الطبيعة ونخدم مجتمعنا.",images:[],createdAt:Date.now()-14400000}]
+  };
+  return [...ownPosts,...(samples[p.username]||[])]
+}
+function socialProfileView(p){
+  const a=getAccount(), isMe=p.id==="me"||p.username===a.username;
+  const privacy=getProfilePrivacy(p.username);
+  const following=getFollowing().includes(p.id);
+  const posts=getPersonPosts(p);
+  const imagePosts=posts.filter(x=>(x.images&&x.images.length)||(x.image));
+  const avatar=p.avatar||"";
+  const profileAvatar=avatar?'<img src="'+esc(avatar)+'" alt="">':esc((p.name||"أ").charAt(0));
+  const controls=isMe?'<div class="profile-control-row"><button class="small-btn" id="profilePrivacyBtn">إعدادات الخصوصية</button><button class="small-btn" id="profileEditBtn">تعديل الملف</button></div>':'';
+  const bio=privacy.bio?'<p class="profile-bio">'+esc(p.bio||"لا توجد نبذة بعد.")+'</p>':'<p class="profile-locked-note">النبذة مخفية.</p>';
+  const stats='<div class="profile-stats"><div><b>'+ (privacy.followers?(p.followers||0):"—") +'</b><small>متابع</small></div><div><b>'+ (privacy.posts?posts.length:"—") +'</b><small>منشور</small></div><div><b>'+ (privacy.badges?"14":"—") +'</b><small>شارات</small></div></div>';
+  const postsHtml=privacy.posts?posts.map(x=>'<article class="profile-post-mini"><div><b>'+esc(p.name)+'</b><small>'+formatDate(x.createdAt)+'</small></div><p>'+esc(x.text||"منشور بصورة").replace(/\n/g,"<br>")+'</p>'+(x.images?.length?'<div class="profile-mini-gallery">'+x.images.slice(0,3).map(im=>'<img src="'+esc(im)+'" alt="">').join("")+'</div>':"")+'</article>').join(""):'<div class="empty-state">صاحب الحساب أخفى منشوراته.</div>';
+  const photosHtml=privacy.photos?(imagePosts.length?imagePosts.map(x=>(x.images||[x.image]).filter(Boolean).map(im=>'<img src="'+esc(im)+'" alt="صورة من منشورات '+esc(p.name)+'">').join("")).join(""):'<div class="empty-state">لا توجد صور منشورة.</div>'):'<div class="empty-state">الصور مخفية.</div>';
+  show('<div class="social-profile"><div class="social-cover"></div><div class="social-profile-main"><span class="profile-avatar-xl">'+profileAvatar+'</span><div class="social-profile-info"><h2>'+esc(p.name)+'</h2><p>@'+esc(p.username)+' • '+esc(p.role||"عضو")+'</p>'+bio+'</div>'+(!isMe?'<button class="follow-btn big '+(following?"following":"")+'" id="profileFollow">'+(following?"متابَع":"متابعة")+'</button>':"")+'</div>'+controls+stats+'<div class="profile-tabs"><button class="active" data-profile-tab="posts">المنشورات</button><button data-profile-tab="photos">الصور</button><button data-profile-tab="badges">الإنجازات</button></div><div id="profileTabContent" class="profile-tab-content">'+postsHtml+'</div></div>');
+  if($("#profileFollow"))$("#profileFollow").onclick=()=>{const ids=getFollowing(),has=ids.includes(p.id);setFollowing(has?ids.filter(x=>x!==p.id):[...ids,p.id]);socialProfileView(p);notify(has?"تم إلغاء المتابعة":"تمت المتابعة")};
+  if($("#profilePrivacyBtn"))$("#profilePrivacyBtn").onclick=()=>profilePrivacyView(p);
+  if($("#profileEditBtn"))$("#profileEditBtn").onclick=editProfileView;
+  $$(".profile-tabs [data-profile-tab]").forEach(b=>b.onclick=()=>{ $$(".profile-tabs [data-profile-tab]").forEach(x=>x.classList.toggle("active",x===b)); const c=$("#profileTabContent"); if(!c)return; if(b.dataset.profileTab==="posts")c.innerHTML=postsHtml; else if(b.dataset.profileTab==="photos")c.innerHTML=photosHtml; else c.innerHTML=privacy.badges?'<div class="profile-badges"><div>★ سيد الملاحة</div><div>✓ الإسعافات الأولية</div><div>◆ حامي البيئة</div></div>':'<div class="empty-state">الإنجازات مخفية.</div>'; });
+}
+function profilePrivacyView(p){
+  const current=getProfilePrivacy(p.username);
+  const row=(key,label,desc)=>'<label class="privacy-option"><input type="checkbox" data-privacy="'+key+'" '+(current[key]?"checked":"")+'><span><b>'+label+'</b><small>'+desc+'</small></span></label>';
+  show('<h2>خصوصية الملف الشخصي</h2><p>اختر ما يظهر للآخرين في حسابك.</p><div class="privacy-list">'+
+    row("bio","النبذة","إظهار أو إخفاء معلوماتك التعريفية.")+
+    row("photos","الصور","إظهار أو إخفاء معرض صورك.")+
+    row("posts","المنشورات","إظهار أو إخفاء منشوراتك.")+
+    row("badges","الإنجازات","إظهار أو إخفاء الشارات والإنجازات.")+
+    row("followers","المتابعون","إظهار أو إخفاء عدد المتابعين.")+
+    '</div><button class="wide-btn" id="savePrivacy">حفظ الخصوصية</button>');
+  $("#savePrivacy").onclick=()=>{const v={};$$("[data-privacy]").forEach(x=>v[x.dataset.privacy]=x.checked);setProfilePrivacy(p.username,v);closeModal();socialProfileView(p);notify("تم حفظ خصوصية حسابك")};
+}
+function openGalleryViewer(images,index=0){
+  images=images.filter(Boolean);if(!images.length)return;
+  let i=Math.max(0,Math.min(index,images.length-1));
+  const render=()=>{show('<div class="image-viewer"><div class="image-viewer-head"><b>صور المنشور <small>'+((i+1)+' / '+images.length)+'</small></b><button class="small-btn" id="closeImageViewer">إغلاق</button></div><div class="image-viewer-stage"><button class="gallery-nav gallery-prev" id="galleryPrev" '+(i===0?"disabled":"")+' aria-label="الصورة السابقة">‹</button><img id="viewerImage" src="'+esc(images[i])+'" alt="صورة المنشور '+(i+1)+'"><button class="gallery-nav gallery-next" id="galleryNext" '+(i===images.length-1?"disabled":"")+' aria-label="الصورة التالية">›</button></div><div class="image-viewer-actions"><a class="wide-btn image-download" href="'+esc(images[i])+'" download="kashaf-image-'+(i+1)+'.jpg">حفظ الصورة</a></div></div>');$("#closeImageViewer").onclick=closeModal;$("#galleryPrev").onclick=()=>{if(i>0){i--;render()}};$("#galleryNext").onclick=()=>{if(i<images.length-1){i++;render()}}};
+  render();
+}
+function getSearchPosts(){
+  const demo=[
+    {id:"demo1",authorName:"فوج الأمل",authorUsername:"al-amal",role:"قائد",text:"غدًا موعد رحلتنا إلى الجبل."},
+    {id:"demo2",authorName:"سارة",authorUsername:"sara",role:"قائدة",text:"تم فتح شارة جديدة لأعضاء الفوج."}
+  ];
+  return [...demo,...readPosts().filter(p=>p.status==="published")];
+}
+function socialSearchView(initial){
+  show('<span class="muted-label">استكشاف</span><h2>البحث في كشّاف</h2><label class="field"><span>حساب، اسم مستخدم، منشور أو وسم</span><input id="socialSearchInput" value="'+esc(initial||"")+'" autofocus placeholder="ابحث باسم شخص أو كلمة من منشور"></label><div class="search-chips"><button data-query="#التخييم">#التخييم</button><button data-query="سارة">سارة</button><button data-query="رحلة الجبل">رحلة الجبل</button></div><div id="socialSearchResults"></div>');
+  const run=()=>{
+    const q=($("#socialSearchInput").value||"").trim().toLowerCase();
+    const people=SOCIAL_PEOPLE.filter(p=>!q||p.name.toLowerCase().includes(q)||p.username.toLowerCase().includes(q)||p.role.toLowerCase().includes(q));
+    const posts=getSearchPosts().filter(p=>!q||[p.text,p.authorName,p.authorUsername,p.role].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)));
+    const tags=["#رحلة_الجبل","#التخييم","#كشافة_الجزائر","#خدمة_المجتمع"].filter(t=>!q||t.toLowerCase().includes(q));
+    let html="";
+    if(people.length)html+='<h3 class="search-section-title">الحسابات</h3>'+people.map(p=>'<button class="search-person" data-profile="'+p.id+'"><span>'+esc(p.name.charAt(0))+'</span><b>'+esc(p.name)+'</b><small>@'+esc(p.username)+' • '+esc(p.role)+'</small></button>').join("");
+    if(posts.length)html+='<h3 class="search-section-title">المنشورات</h3>'+posts.slice(0,12).map(p=>'<button class="search-post-result" data-search-post="'+p.id+'"><b>'+esc(p.authorName)+'</b><small>'+esc((p.text||"منشور بصورة").slice(0,120))+'</small></button>').join("");
+    if(tags.length)html+='<h3 class="search-section-title">الوسوم</h3>'+tags.map(t=>'<button class="trend-tag" data-tag="'+esc(t)+'"><b>'+t+'</b><small>استكشف المنشورات المرتبطة</small></button>').join("");
+    $("#socialSearchResults").innerHTML=html||'<div class="empty-state">لا توجد نتائج مطابقة.</div>';
+    $$("#socialSearchResults [data-profile]").forEach(b=>b.onclick=()=>{const p=SOCIAL_PEOPLE.find(x=>x.id===b.dataset.profile);if(p)socialProfileView(p)});
+    $$("#socialSearchResults [data-search-post]").forEach(b=>b.onclick=()=>{const id=b.dataset.searchPost;closeModal();openCommunity();setTimeout(()=>document.querySelector('[data-post-id="'+id+'"]')?.scrollIntoView({behavior:"smooth",block:"center"}),100)});
+  };
+  $("#socialSearchInput").oninput=run;
+  $$("[data-query]").forEach(b=>b.onclick=()=>{$("#socialSearchInput").value=b.dataset.query;run()});
+  run();
+}
+function postMenuView(postId){
+  const posts=readPosts(), p=posts.find(x=>x.id===postId), own=!!p&&p.authorUsername===getAccount().username;
+  const actions=own?
+    '<button class="catalog-item" id="menuEdit"><b>تعديل المنشور</b><small>تغيير النص أو الصور</small></button><button class="catalog-item" id="menuPrivacy"><b>خصوصية المنشور</b><small>إظهار أو إخفاء هذا المنشور</small></button><button class="catalog-item" id="menuCopy"><b>نسخ رابط المنشور</b><small>مشاركة الرابط</small></button><button class="catalog-item danger-item" id="menuDelete"><b>حذف المنشور</b><small>إزالة المنشور نهائيًا</small></button>':
+    '<button class="catalog-item" id="menuSaveAlt"><b>حفظ المنشور</b><small>الرجوع إليه لاحقًا</small></button><button class="catalog-item" id="menuNotInterested"><b>لست مهتمًا</b><small>إخفاء محتوى مشابه من الخلاصة</small></button><button class="catalog-item" id="menuReport"><b>الإبلاغ عن المنشور</b><small>إرسال البلاغ للمراجعة</small></button><button class="catalog-item" id="menuCopy"><b>نسخ رابط المنشور</b><small>مشاركة الرابط</small></button>';
+  show('<h2>خيارات المنشور</h2><div class="feature-catalog">'+actions+'</div>');
+  if($("#menuEdit"))$("#menuEdit").onclick=()=>createPostView(postId);
+  if($("#menuDelete"))$("#menuDelete").onclick=()=>{savePosts(posts.filter(x=>x.id!==postId));closeModal();renderUserPosts();notify("تم حذف المنشور")};
+  if($("#menuPrivacy"))$("#menuPrivacy").onclick=()=>{if(p){p.status=p.status==="hidden"?"published":"hidden";savePosts(posts);closeModal();renderUserPosts();notify(p.status==="hidden"?"تم إخفاء المنشور":"تم إظهار المنشور")}};
+  if($("#menuSaveAlt"))$("#menuSaveAlt").onclick=()=>{const ids=getSavedPostIds();if(!ids.includes(postId))setSavedPostIds([...ids,postId]);closeModal();notify("تم حفظ المنشور")};
+  if($("#menuNotInterested"))$("#menuNotInterested").onclick=()=>{socialSave("hiddenPosts",[...new Set([...socialStore("hiddenPosts",[]),postId])]);closeModal();renderUserPosts();notify("تم إخفاء المنشور من خلاصتك")};
+  if($("#menuReport"))$("#menuReport").onclick=()=>{closeModal();notify("تم إرسال البلاغ للمراجعة")};
+  if($("#menuCopy"))$("#menuCopy").onclick=()=>{navigator.clipboard?.writeText(location.href.split("#")[0]+"#post-"+postId);closeModal();notify("تم نسخ رابط المنشور")};
+}
+
+/* reliable threaded comments */
+function commentsView(postId){
+  const comments=getPostComments(postId);
+  show('<div class="comments-head"><div><h2>التعليقات</h2><p>'+comments.length+' تعليق • الردود مرتبة أسفل كل تعليق.</p></div><button class="small-btn" id="closeCommentsModal">إغلاق</button></div><div class="comments-list">'+(comments.length?comments.map(commentHtml).join(""):'<div class="empty-state">كن أول من يشارك رأيه.</div>')+'</div><div class="comment-composer"><input id="commentInput" placeholder="اكتب تعليقًا..."><button class="wide-btn" id="sendComment">إرسال</button></div>');
+  $("#closeCommentsModal").onclick=closeModal;
+  $("#sendComment").onclick=()=>{const text=$("#commentInput").value.trim();if(!text)return;const a=getAccount(),list=getPostComments(postId).filter(c=>!(postId==="demo1"&&c.id==="c1"));list.push({id:"c"+Date.now(),name:a.name,role:a.role,text,time:"الآن",replies:[]});localStorage.setItem("comments_"+postId,JSON.stringify(list));incrementPostComments(postId);commentsView(postId);notify("تم نشر التعليق")};
+  $$(".reply-comment").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();commentComposerView(postId,b.dataset.commentId)});
+  $$(".like-comment").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();const key="likedComment_"+postId+"_"+b.dataset.commentId,active=!b.classList.contains("active");b.classList.toggle("active",active);b.textContent=active?"♥ أعجبني":"♡ إعجاب";localStorage.setItem(key,active?"1":"0")});
+}
+function renderUserPosts(){
+  const wrap=$("#feed .posts");if(!wrap)return;
+  $$(".user-post").forEach(e=>e.remove());
+  const hidden=new Set(socialStore("hiddenPosts",[]));
+  const posts=readPosts().filter(p=>(p.status==="published"||p.authorUsername===getAccount().username)&&!hidden.has(p.id));
+  posts.reverse().forEach(p=>wrap.prepend(postElement(p)));
+  mountIcons();
+}
+
+/* account profile shortcut */
+function accountView(){
+  const a=getAccount();
+  show('<div class="account-head"><div class="account-avatar-lg" id="accountAvatarPreview">'+(a.avatar?'<img src="'+a.avatar+'" alt="">':esc((a.name||"أ").charAt(0)))+'</div><div><h2>حسابي</h2><p>@'+esc(a.username)+' • '+esc(a.role)+' • مستوى '+esc(a.level)+'</p></div></div><div class="feature-catalog account-menu"><button class="catalog-item" id="viewMyProfile"><b>عرض ملفي</b><small>المنشورات، الصور والإنجازات</small></button><button class="catalog-item" id="editProfileBtn"><b>تعديل الملف الشخصي</b><small>الصورة، الاسم واسم المستخدم</small></button><button class="catalog-item" id="myPostsBtn"><b>منشوراتي</b><small>تعديل وحذف منشوراتك</small></button><button class="catalog-item" id="savedPostsBtn"><b>المنشورات المحفوظة</b><small>ما حفظته للعودة إليه</small></button><button class="catalog-item" id="accountSettings2"><b>الإعدادات والخصوصية</b><small>الخصوصية والإشعارات</small></button></div>');
+  $("#viewMyProfile").onclick=()=>socialProfileView({id:"me",name:a.name,username:a.username,role:a.role,bio:localStorage.getItem("accountBio")||"كشاف في مجتمع كشّاف.",followers:Number(localStorage.getItem("accountFollowers")||0),avatar:a.avatar});
+  $("#editProfileBtn").onclick=editProfileView;$("#myPostsBtn").onclick=myPostsView;$("#savedPostsBtn").onclick=savedPostsView;$("#accountSettings2").onclick=settingsView;
+}
+
+/* media navigation and profile discovery */
+document.addEventListener("click",e=>{
+  const photo=e.target.closest(".post-gallery .post-photo");
+  if(photo){e.preventDefault();const gallery=[...photo.closest(".post-gallery").querySelectorAll(".post-photo")].map(x=>x.src);openGalleryViewer(gallery,Math.max(0,[...photo.closest(".post-gallery").querySelectorAll(".post-photo")].indexOf(photo)));return}
+  const profile=e.target.closest(".post-head b");
+  if(profile){const post=profile.closest(".post"),name=profile.textContent.split(" • ")[0].trim(),p=SOCIAL_PEOPLE.find(x=>x.name===name);if(p){socialProfileView(p);return}}
+});
